@@ -16,9 +16,9 @@ import re
 import time
 from dotenv import load_dotenv
 import chromadb
-from chromadb.utils import embedding_functions
 from google import genai
 from google.genai import types
+from embeddings import make_embedding_function
 
 BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(BASE_DIR / ".env")
@@ -167,9 +167,7 @@ Ejemplo concreto de Deathknell + Combat Cleanup:
 # Setup
 app = FastAPI(title="Riftbound Chatbot")
 
-ef = embedding_functions.SentenceTransformerEmbeddingFunction(
-    model_name="paraphrase-multilingual-MiniLM-L12-v2"
-)
+ef = make_embedding_function()
 client = chromadb.PersistentClient(path=str(CHROMA_DIR))
 collection = client.get_collection(name=COLLECTION_NAME, embedding_function=ef)
 

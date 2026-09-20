@@ -18,7 +18,7 @@ Autor: **Facundo Nahuel Godoy**.
 |---|---|
 | Frontend | HTML / CSS / JS (chat único) |
 | Backend | Python, FastAPI |
-| Memoria de reglas | ChromaDB + embeddings `paraphrase-multilingual-MiniLM-L12-v2` |
+| Memoria de reglas | ChromaDB + embeddings `gemini-embedding-001` |
 | Cartas | `cards.json` (~960 cartas) |
 | Juez (nube) | Gemini Flash (cadena draft + verifier) |
 | Visión (local) | Ollama + `minicpm-v` |
@@ -36,12 +36,13 @@ pip install -r requirements.txt
 copy .env.example .env
 ```
 
-En `.env` pegá `GEMINI_API_KEY`. Indexá el reglamento (la primera vez tarda porque descarga el modelo de embeddings):
+En `.env` pegá `GEMINI_API_KEY`. El índice de reglas ya viene armado en `chroma_db/`, así que alcanza con levantar el server:
 
 ```bash
-python ingest.py
 python -m uvicorn app:app --host 127.0.0.1 --port 8000
 ```
+
+`ingest.py` solo hace falta si cambiás los documentos de `docs/`. Tarda unos 6 minutos porque va despacio para no agotar la cuota de embeddings.
 
 Abrí http://127.0.0.1:8000
 

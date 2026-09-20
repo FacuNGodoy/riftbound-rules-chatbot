@@ -8,7 +8,6 @@ __pycache__/
 *.log
 .idea/
 .vscode/
-chroma_db/
 cards_backup*.json
 cards_v1_backup.json
 cards_v3.json

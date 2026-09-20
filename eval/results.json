@@ -1,12 +1,11 @@
 {
-  "timestamp": "2026-08-27T09:43:38",
+  "timestamp": "2026-09-20T16:22:12",
   "config": {
     "draft_models": [
       "gemini-3.7-flash",
       "gemini-3.6-flash",
       "gemini-3.5-flash",
       "gemini-3-flash-preview",
-      "gemini-2.5-flash",
       "gemini-3.5-flash-lite"
     ],
     "verifier_models": [
@@ -15,12 +14,39 @@
       "gemini-3.6-flash"
     ],
     "top_k": 12,
-    "draft_override": false
+    "draft_override": false,
+    "vision_enabled": false
   },
-  "passed": 1,
-  "total": 1,
-  "pct": 100.0,
+  "passed": 5,
+  "total": 7,
+  "pct": 71.4,
   "results": [
+    {
+      "id": 1,
+      "tags": [
+        "printed-cost",
+        "empower",
+        "206"
+      ],
+      "deterministic": false,
+      "verdict": "SI",
+      "expected_verdict": "NO",
+      "verdict_ok": false,
+      "confidence": "ALTA",
+      "citations": 4,
+      "citation_titles": [
+        "Tail-Cloaked Matriarch",
+        "Rhasa the Sunderer",
+        "Regla 356.1.b",
+        "Regla 206"
+      ],
+      "rules_found": [
+        "206"
+      ],
+      "rules_missing": [],
+      "passed": false,
+      "answer": "Sí, podés jugar a Rhasa the Sunderer con la habilidad de Tail-Cloaked Matriarch. \n\n1. Tail-Cloaked Matriarch se vuelve Empowered y te permite elegir una unidad en tu trash con coste de Energía no mayor a [3] y jugarla ignorando su coste ([VEN-104]).\n2. Aunque el coste impreso de Rhasa the Sunderer es alto debido a su habilidad de reducción basada en las cartas en el trash ([OGN-195]), la instrucción de jugar la unidad \"ignorando su coste\" aplica según la regla 356.1.b, permitiendo que sea seleccionada y jugada.\n3. Por lo tanto, la restricción de coste de la Matriarch se cumple al aplicar la excepción de jugar la carta ignorando sus costes."
+    },
     {
       "id": 2,
       "tags": [
@@ -35,16 +61,174 @@
       "confidence": "ALTA",
       "citations": 3,
       "citation_titles": [
+        "Regla 718.4",
         "Deathgrip",
-        "Regla 137.3",
-        "Regla 137.3.a"
+        "Regla 137.3"
       ],
       "rules_found": [
         "137.3"
       ],
       "rules_missing": [],
       "passed": true,
-      "answer": "Sí, Deathgrip toma en cuenta el Might total actual de la unidad destruida, incluyendo los bonos otorgados por equipos (gears) adjuntos. Según las reglas, el Might Bonus de un equipo adjunto modula el Might de la unidad mientras permanece adjunta, por lo que el valor de su Might al momento de ser destruida incluye dichas modificaciones."
+      "answer": "Sí, incluye el Might otorgado por los gears. Según la regla 718.4, el Might Bonus de un gear adjunto modula directamente el Might de la unidad a la que está adjunto. Por lo tanto, al determinar el Might de la unidad destruida por Deathgrip, se toma su valor total actual que incluye dichos bonos."
+    },
+    {
+      "id": 3,
+      "tags": [
+        "hidden",
+        "811.1.d",
+        "targeting"
+      ],
+      "deterministic": false,
+      "verdict": "NO",
+      "expected_verdict": "NO",
+      "verdict_ok": true,
+      "confidence": "ALTA",
+      "citations": 4,
+      "citation_titles": [
+        "Regla 811.1.d.1",
+        "Regla 811.1.d.2",
+        "Regla 355.7",
+        "Kennen, Keeper of Balance"
+      ],
+      "rules_found": [
+        "811.1"
+      ],
+      "rules_missing": [],
+      "passed": true,
+      "answer": "No, no puede stunear una unidad en cualquier battlefield cuando se juega desde Hidden. Al jugarlo desde Hidden, su efecto al jugarse (*play effect*) de elegir y stunear una unidad está sujeto a la restricción de objetivos de cartas ocultas, por lo que debe elegirse una unidad en el mismo battlefield donde se encontraba oculto.\n\nPaso a paso:\n1. **Ubicación del permanente oculto (Regla 811.1.d.1):** Un permanente oculto debe jugarse al battlefield en el que fue colocado boca abajo.\n2. **Restricción de objetivos al jugar (Regla 811.1.d.2):** Si un efecto al jugar (*play effect*) de un permanente oculto elige objetivos, dichos objetivos deben elegirse de entre las opciones disponibles en ese battlefield, a menos que la carta indique lo contrario.\n3. **Habilidad de Kennen ([VEN-135]):** Su habilidad dice \"When you play me or I attack, you may pay [2] to [Stun] a unit\". Al ser un efecto al jugarse que requiere elegir un objeto específico (un objetivo según la regla 355.7), y al no tener el texto una excepción explícita que permita elegir en otra ubicación, la selección queda restringida al battlefield actual."
+    },
+    {
+      "id": 4,
+      "tags": [
+        "repeat",
+        "counter",
+        "820"
+      ],
+      "deterministic": false,
+      "verdict": "NO",
+      "expected_verdict": "NO",
+      "verdict_ok": true,
+      "confidence": "ALTA",
+      "citations": 3,
+      "citation_titles": [
+        "Regla 820.1.d",
+        "Regla 425.1.a",
+        "Defy"
+      ],
+      "rules_found": [
+        "820.1"
+      ],
+      "rules_missing": [],
+      "passed": true,
+      "answer": "No, no se puede usar el Repeat si el hechizo es countereado. Según la regla 820.1.d, el efecto adicional de Repeat ocurre únicamente \"durante la resolución\" del ítem en la cadena. Cuando un hechizo es countereado (Defy), la regla 425.1.a indica que el hechizo no hace nada y es eliminado de la cadena, por lo que nunca llega a resolverse y ninguna de sus ejecuciones (ni la original ni la extra por Repeat) llega a llevarse a cabo."
+    },
+    {
+      "id": 5,
+      "tags": [
+        "i-means-the-card",
+        "combat-win",
+        "053"
+      ],
+      "deterministic": false,
+      "verdict": "NO",
+      "expected_verdict": "NO",
+      "verdict_ok": true,
+      "confidence": "ALTA",
+      "citations": 5,
+      "citation_titles": [
+        "Nidalee, Cat Form",
+        "Regla 323.4",
+        "Regla 323.5",
+        "Regla 428.1.a.2",
+        "Regla 428.2"
+      ],
+      "rules_found": [],
+      "rules_missing": [],
+      "passed": true,
+      "answer": "No, no roba. Si Nidalee muere durante el combate, va al trash y no permanece en el battlefield, por lo que no cumple la condición restrictiva especificada en su texto para ganar el combate y activar su habilidad disparada."
+    },
+    {
+      "id": 6,
+      "tags": [
+        "play-location",
+        "attacker-defender",
+        "355",
+        "464"
+      ],
+      "deterministic": false,
+      "verdict": "DEPENDE",
+      "expected_verdict": null,
+      "verdict_ok": null,
+      "confidence": "ALTA",
+      "citations": 4,
+      "citation_titles": [
+        "Flame Chompers",
+        "Regla 355.2.a",
+        "Regla 355.2.b",
+        "Regla 822"
+      ],
+      "rules_found": [
+        "355"
+      ],
+      "rules_missing": [
+        "464"
+      ],
+      "passed": false,
+      "answer": "Depende de si controlás o no el battlefield donde ocurre el showdown. Por defecto, las ubicaciones válidas para jugar una unidad son tu Base o un battlefield que vos controlés (355.2.a). Si controlás el battlefield (por ejemplo, sos el defensor), podés jugarla allí; si no lo controlás (por ejemplo, sos el atacante), al no tener una habilidad de Ambush (822) u otro efecto que expanda sus ubicaciones válidas al battlefield no controlado, la única ubicación válida para jugarla es tu Base."
+    },
+    {
+      "id": 7,
+      "tags": [
+        "deathknell",
+        "combat-cleanup",
+        "320",
+        "323.4",
+        "466.1"
+      ],
+      "deterministic": false,
+      "verdict": "INFORMATIVO",
+      "expected_verdict": null,
+      "verdict_ok": null,
+      "confidence": "ALTA",
+      "citations": 4,
+      "citation_titles": [
+        "Regla 320",
+        "Regla 323.4",
+        "Regla 466.1.a.1",
+        "Regla 808.1"
+      ],
+      "rules_found": [
+        "320"
+      ],
+      "rules_missing": [],
+      "passed": true,
+      "answer": "En Combat Cleanup, Deathknell triggerea antes del heal pero se resuelve después. En 3a queda como Pending Item; en 3b mueren las unidades con lethal; en 3c se curan las sobrevivientes. Durante el Cleanup la chain no puede finalizarse ni resolverse, así que el efecto de Deathknell espera hasta que termine el Cleanup.\n\nConsecuencia práctica: la unidad que sobrevivió el combate ya está curada a 0 de daño cuando el Deathknell la golpea. Por eso solo muere si el daño del Deathknell por sí solo alcanza o supera su Might. El daño que había recibido en el combate NO se suma."
+    },
+    {
+      "id": 8,
+      "tags": [
+        "hidden-blade",
+        "zhonya",
+        "replacement",
+        "linked-instructions",
+        "359.3.e.14"
+      ],
+      "deterministic": true,
+      "verdict": "SI",
+      "expected_verdict": "SI",
+      "verdict_ok": true,
+      "confidence": "ALTA",
+      "citations": 3,
+      "citation_titles": [
+        "Regla 359.3.e.14",
+        "Hidden Blade",
+        "Zhonya's Hourglass"
+      ],
+      "rules_found": [],
+      "rules_missing": [],
+      "passed": true,
+      "answer": "Sí, el controlador de la unidad roba 2. Hidden Blade primero intenta matar la unidad; Zhonya's Hourglass reemplaza esa muerte por heal, exhaust y recall. Como el draw es una instrucción vinculada que no dice “If you do”, el reemplazo del kill no impide que se ejecute. Esto es distinto de Flash o Retreat: si la unidad deja de ser un target válido antes de resolver, Hidden Blade mistargetea y no se roba."
     }
   ]
 }

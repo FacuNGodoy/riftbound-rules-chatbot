@@ -1,12 +1,23 @@
 """
 Ingesta: lee los .md de docs/, los divide por secciones (## / ###)
-y los indexa en ChromaDB con embeddings de sentence-transformers.
+y los indexa en ChromaDB con embeddings de la API de Gemini.
+
+Se corre una sola vez y el índice resultante se versiona: el servidor de
+producción no reindexa, solo consulta.
 """
 
+import os
 import re
+import time
 from pathlib import Path
+from dotenv import load_dotenv
 import chromadb
-from chromadb.utils import embedding_functions
+from embeddings import make_embedding_function
+
+# El free tier permite 100 textos por minuto. Con lotes chicos y una pausa
+# entre lotes la ingesta entra sin chocar la cuota.
+BATCH_SIZE = 20
+PAUSE_SECONDS = 14
 
 BASE_DIR = Path(__file__).resolve().parent
 DOCS_DIR = BASE_DIR / "docs"
@@ -96,11 +107,26 @@ def split_large_chunks(chunks: list[dict], max_chars: int = 1500) -> list[dict]:
     return result
 
 
+def add_batch_with_retry(collection, ids, documents, metadatas, attempts=5):
+    """Reintenta ante un 429: la cuota por minuto se recupera sola."""
+    for attempt in range(attempts):
+        try:
+            collection.add(ids=ids, documents=documents, metadatas=metadatas)
+            return
+        except Exception as exc:
+            quota = "429" in str(exc) or "RESOURCE_EXHAUSTED" in str(exc)
+            if not quota or attempt == attempts - 1:
+                raise
+            espera = 30 * (attempt + 1)
+            print(f"    cuota agotada, reintento en {espera}s")
+            time.sleep(espera)
+
+
 def main():
-    # Embedding function
-    ef = embedding_functions.SentenceTransformerEmbeddingFunction(
-        model_name="paraphrase-multilingual-MiniLM-L12-v2"
-    )
+    load_dotenv(BASE_DIR / ".env")
+    if not os.environ.get("GEMINI_API_KEY", "").strip():
+        raise RuntimeError("Falta GEMINI_API_KEY: los embeddings salen por la API.")
+    ef = make_embedding_function()
 
     # ChromaDB client
     client = chromadb.PersistentClient(path=str(CHROMA_DIR))
@@ -132,16 +158,21 @@ def main():
         all_chunks.extend(chunks)
 
     # Indexar en ChromaDB
+    total_batches = (len(all_chunks) + BATCH_SIZE - 1) // BATCH_SIZE
     print(f"\nIndexando {len(all_chunks)} chunks en ChromaDB...")
-    batch_size = 100
-    for i in range(0, len(all_chunks), batch_size):
-        batch = all_chunks[i:i + batch_size]
-        collection.add(
+    print(f"Son {total_batches} lotes con pausa: unos {total_batches * PAUSE_SECONDS // 60} minutos.")
+    for i in range(0, len(all_chunks), BATCH_SIZE):
+        batch = all_chunks[i:i + BATCH_SIZE]
+        add_batch_with_retry(
+            collection,
             ids=[f"chunk_{i + j}" for j in range(len(batch))],
             documents=[c["text"] for c in batch],
             metadatas=[{"header": c["header"], "source": c["source"], "category": c["category"]} for c in batch],
         )
-        print(f"  Batch {i // batch_size + 1}: {len(batch)} chunks indexados")
+        numero = i // BATCH_SIZE + 1
+        print(f"  Lote {numero}/{total_batches}: {len(batch)} chunks indexados")
+        if numero < total_batches:
+            time.sleep(PAUSE_SECONDS)
 
     print(f"\nIngesta completa: {collection.count()} chunks en la coleccion.")
 

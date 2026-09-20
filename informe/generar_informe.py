@@ -432,7 +432,12 @@ def build():
             [
                 "Base de datos",
                 "ChromaDB + JSON",
-                "Chroma para RAG del reglamento. SQLite/Postgres no aportan: no hay usuarios. Las cartas van en JSON para no alucinar el texto.",
+                "Chroma para RAG del reglamento, con el índice ya construido y versionado. SQLite/Postgres no aportan: no hay usuarios. Las cartas van en JSON para no alucinar el texto.",
+            ],
+            [
+                "Embeddings",
+                "API de Gemini (gemini-embedding-001)",
+                "Empezó con sentence-transformers local, pero eso arrastra PyTorch y el plan gratuito de Render (512 MB) moría por falta de memoria. Los embeddings por API son multilingües y dejan el servidor sin modelos cargados. Medido: la suite de juez dio el mismo 5/7 antes y después del cambio.",
             ],
             [
                 "Modelo de IA",
