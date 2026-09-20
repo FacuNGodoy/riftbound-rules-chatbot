@@ -26,8 +26,6 @@ fetch("/config")
     })
     .catch(() => {});
 
-let pendingImages = [];
-
 const loadingMessages = [
     "Pensando...",
     "Consultando el grimorio...",
