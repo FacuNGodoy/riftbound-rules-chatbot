@@ -1,0 +1,11 @@
+services:
+  - type: web
+    name: riftbound-rules-chatbot
+    runtime: docker
+    plan: free
+    healthCheckPath: /health
+    envVars:
+      - key: RIFTBOUND_VISION
+        value: "0"
+      - key: GEMINI_API_KEY
+        sync: false
