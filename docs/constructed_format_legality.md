@@ -1,0 +1,19 @@
+# Constructed Format Legality
+
+Constructed Format Legality
+
+Last updated: July 16, 2026
+
+All sets currently produced for Riftbound are legal to be played in sanctioned tournaments at your local game store
+as well as at larger tournaments. Starting in 2028, we intend to introduce rotation of legal sets for play in Standard
+Constructed (our primary constructed format.)
+
+The following are banned from play in sanctioned Constructed tournaments:
+
+Cards Battlefields
+* Called Shot + The Arena’s Greatest
+* Draven, Vanguisher + Aspirant’s Climb
+* Fight or Flight + Dreaming Tree
+* Scrapheap + Obelisk of Power
+
+* Stealthy Pursuer + Reaver's Row
