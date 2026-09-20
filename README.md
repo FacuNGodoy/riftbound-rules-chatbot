@@ -8,7 +8,7 @@ Autor: **Facundo Nahuel Godoy**.
 ## Qué hace
 
 - Consulta de Core Rules, patch notes y legalidad de formato.
-- Identificación de cartas por nombre, número (`OGN-195`) o foto (visión local con Ollama).
+- Identificación de cartas por nombre, número (`OGN-195`) o foto.
 - Resolución de jugadas (timing, Hidden, Repeat, Deathknell, reemplazos).
 - Ciclo draft → verifier: un modelo redacta, otro contrasta contra la evidencia recuperada.
 
@@ -21,7 +21,7 @@ Autor: **Facundo Nahuel Godoy**.
 | Memoria de reglas | ChromaDB + embeddings `gemini-embedding-001` |
 | Cartas | `cards.json` (~960 cartas) |
 | Juez (nube) | Gemini Flash (cadena draft + verifier) |
-| Visión (local) | Ollama + `minicpm-v` |
+| Visión | Gemini multimodal en Render / Ollama + `minicpm-v` en local |
 | Publicación | Render (Web Service + Docker) |
 
 ## Cómo correrlo en local
@@ -46,17 +46,27 @@ python -m uvicorn app:app --host 127.0.0.1 --port 8000
 
 Abrí http://127.0.0.1:8000
 
-Para visión: `ollama pull minicpm-v` y dejar Ollama corriendo.
+Por defecto, el entorno local usa Ollama: `ollama pull minicpm-v` y dejarlo
+corriendo. Para probar la misma visión de producción:
+
+```bash
+set RIFTBOUND_VISION_PROVIDER=gemini
+python -m uvicorn app:app --host 127.0.0.1 --port 8000
+```
 
 ## Publicar en Render
 
 1. Subí este repo a GitHub (público).
 2. En [render.com](https://render.com) → **New** → **Web Service** → conectá el repo.
 3. Runtime: **Docker**. Plan: **Free**.
-4. Environment: `GEMINI_API_KEY` (secret) y `RIFTBOUND_VISION=0`.
+4. Environment: `GEMINI_API_KEY` (secret) y
+   `RIFTBOUND_VISION_PROVIDER=gemini`.
 5. URL: `https://riftbound-rules-chatbot.onrender.com` (el nombre puede variar).
 
-En Render **no hay fotos de cartas**. Preguntá por nombre (`Defy`) o número (`OGN-045`). El primer request después de un rato inactivo puede tardar ~1 minuto (la instancia se duerme).
+En Render, Gemini identifica la foto y el backend cruza nombre/número contra
+`cards.json`; el ruling nunca depende del texto recordado por el modelo. El
+primer request después de un rato inactivo puede tardar ~1 minuto (la instancia
+se duerme).
 
 ## Evaluación automática
 
@@ -72,7 +82,8 @@ Los casos están en `eval/judge_cases.json`. Un log de sesión real está en `ev
 
 - La API key **no** va en el código: vive en `.env` (ignorado por git).
 - El modelo no recibe instrucciones del usuario como system prompt: la query entra como pregunta, el reglamento entra como contexto recuperado.
-- No hay cuentas de usuario: no se persisten chats ni fotos en disco.
+- No hay cuentas de usuario: no se persisten chats ni fotos en disco. En
+  producción, las fotos se envían a Gemini para identificar la carta.
 
 ## Estructura
 

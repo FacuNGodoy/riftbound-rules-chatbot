@@ -10,6 +10,8 @@ const attachBtn = document.querySelector(".attach-btn");
 
 let pendingImages = [];
 let visionEnabled = true;
+const maxImages = 3;
+const maxImageBytes = 8 * 1024 * 1024;
 
 fetch("/config")
     .then((r) => r.json())
@@ -191,6 +193,18 @@ function addMessage(text, type, sources, imageUrls, ruling) {
 }
 
 function addImageToPreview(file) {
+    if (pendingImages.length >= maxImages) {
+        alert(`Podés adjuntar como máximo ${maxImages} imágenes por pregunta.`);
+        return;
+    }
+    if (file.size > maxImageBytes) {
+        alert(`La imagen ${file.name || "adjunta"} supera el límite de 8 MB.`);
+        return;
+    }
+    if (!["image/jpeg", "image/png", "image/webp", "image/gif"].includes(file.type)) {
+        alert("Formato no admitido. Usá JPG, PNG, WEBP o GIF.");
+        return;
+    }
     pendingImages.push(file);
     const thumb = document.createElement("div");
     thumb.className = "thumb";

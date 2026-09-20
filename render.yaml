@@ -5,7 +5,7 @@ services:
     plan: free
     healthCheckPath: /health
     envVars:
-      - key: RIFTBOUND_VISION
-        value: "0"
+      - key: RIFTBOUND_VISION_PROVIDER
+        value: gemini
       - key: GEMINI_API_KEY
         sync: false

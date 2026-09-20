@@ -32,13 +32,25 @@ if not GEMINI_API_KEY:
     raise RuntimeError(
         "Falta GEMINI_API_KEY. Copiá .env.example a .env y pegá la clave."
     )
-VISION_ENABLED = os.environ.get("RIFTBOUND_VISION", "1").strip().lower() not in (
-    "0",
-    "false",
-    "no",
-    "off",
-)
-if VISION_ENABLED:
+
+# Proveedor de visión:
+# - local: Ollama/minicpm-v (default histórico)
+# - Render: Gemini, porque no hay Ollama/GPU en el plan gratuito.
+# RIFTBOUND_VISION_PROVIDER tiene prioridad. Para migrar el deploy existente,
+# el viejo RIFTBOUND_VISION=0 ahora selecciona Gemini en vez de ocultar fotos.
+_vision_provider = os.environ.get("RIFTBOUND_VISION_PROVIDER", "").strip().lower()
+if not _vision_provider:
+    legacy_vision = os.environ.get("RIFTBOUND_VISION", "1").strip().lower()
+    _vision_provider = (
+        "gemini" if legacy_vision in {"0", "false", "no", "off"} else "ollama"
+    )
+if _vision_provider not in {"ollama", "gemini", "none"}:
+    raise RuntimeError(
+        "RIFTBOUND_VISION_PROVIDER debe ser ollama, gemini o none."
+    )
+VISION_PROVIDER = _vision_provider
+VISION_ENABLED = VISION_PROVIDER != "none"
+if VISION_PROVIDER == "ollama":
     import ollama
 GEMINI_MODEL = "gemini-3.7-flash"
 # Cada modelo tiene su propia cuota diaria (RPD). Si se agota uno, se pasa al siguiente.
@@ -69,6 +81,16 @@ if _draft_override:
     print(f"DRAFT_MODELS override activo: {DRAFT_MODELS}")
 
 VISION_MODEL = "minicpm-v"
+VISION_GEMINI_MODELS = [
+    GEMINI_MODEL,
+    "gemini-3.6-flash",
+    "gemini-3.5-flash",
+    "gemini-3-flash-preview",
+    "gemini-3.5-flash-lite",
+]
+MAX_IMAGE_BYTES = 8 * 1024 * 1024
+MAX_IMAGES = 3
+ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp", "image/gif"}
 MODEL_TIMEOUT_SECONDS = 150
 
 gemini_client = genai.Client(api_key=GEMINI_API_KEY)
@@ -261,50 +283,106 @@ def format_card_info(card: dict) -> str:
     return "\n".join(parts)
 
 
-def identify_card_from_image(image_bytes: bytes) -> str:
-    """Usa visión para identificar la carta y busca datos precisos en la DB."""
+VISION_PROMPT = """Look at this Riftbound trading card and identify it.
+Read the printed card, not surrounding text. Return ONLY these three lines:
+NUMBER: card number from the bottom-left (example OGN-045), or UNKNOWN
+NAME: full card name, including subtitle after the main name, or UNKNOWN
+ENERGY: energy cost from the top-left, or UNKNOWN
+
+Do not explain. If this is not a Riftbound card or the text is unreadable, use UNKNOWN."""
+
+
+def identify_card_with_gemini(image_bytes: bytes, mime_type: str) -> str:
+    """Lee la foto con Gemini. Prueba modelos alternativos ante cuota o retiro."""
+    contents = [
+        VISION_PROMPT,
+        types.Part.from_bytes(data=image_bytes, mime_type=mime_type),
+    ]
+    config = types.GenerateContentConfig(
+        temperature=0,
+        http_options=types.HttpOptions(timeout=MODEL_TIMEOUT_SECONDS * 1000),
+    )
+    last_exc: Exception | None = None
+    for model_name in VISION_GEMINI_MODELS:
+        if not model_available(model_name):
+            continue
+        try:
+            response = gemini_client.models.generate_content(
+                model=model_name,
+                contents=contents,
+                config=config,
+            )
+            if response.text:
+                return response.text
+            raise RuntimeError(f"{model_name} no devolvió texto para la imagen")
+        except Exception as exc:
+            last_exc = exc
+            if is_quota_error(exc):
+                quota_cooldown[model_name] = (
+                    time.monotonic() + QUOTA_COOLDOWN_SECONDS
+                )
+            if is_retryable_error(exc) or is_model_unavailable_error(exc):
+                print(
+                    f"VISION GEMINI: falló {model_name} "
+                    f"({type(exc).__name__}), probando el siguiente"
+                )
+                continue
+            raise
+    if last_exc:
+        raise last_exc
+    raise RuntimeError("No hay modelos Gemini de visión disponibles")
+
+
+def identify_card_from_image(
+    image_bytes: bytes,
+    mime_type: str = "image/jpeg",
+) -> str:
+    """Identifica la foto y devuelve datos exactos desde cards.json."""
     if not VISION_ENABLED:
         return (
             "En esta versión publicada no hay reconocimiento por foto. "
             "Escribí el nombre o el número de la carta (ej. Defy, OGN-045)."
         )
-    b64 = base64.b64encode(image_bytes).decode("utf-8")
-    try:
-        response = ollama.chat(
-            model=VISION_MODEL,
-            messages=[{
-                "role": "user",
-                "content": """Look at this Riftbound card and tell me ONLY these 3 things, nothing else:
-1. Card number (bottom left corner, format like OGN-006, SFD-115, VEN-088, etc.)
-2. Card FULL name: read BOTH the main name AND the subtitle below it. Cards have a big name (e.g. "Kennen") and a smaller subtitle below (e.g. "Keeper of Balance"). Combine them as "Name, Subtitle" (e.g. "Kennen, Keeper of Balance"). If there is no subtitle, just write the main name.
-3. Energy cost (number in the top left circle)
+    if not image_bytes:
+        return "La imagen adjunta está vacía."
+    if len(image_bytes) > MAX_IMAGE_BYTES:
+        return "La imagen supera el límite de 8 MB."
+    normalized_mime = (mime_type or "").lower()
+    if normalized_mime not in ALLOWED_IMAGE_TYPES:
+        return "Formato de imagen no admitido. Usá JPG, PNG, WEBP o GIF."
 
-Reply in this exact format:
-NUMBER: xxx
-NAME: xxx
-ENERGY: xxx""",
-                "images": [b64],
-            }],
-        )
+    try:
+        if VISION_PROVIDER == "gemini":
+            vision_text = identify_card_with_gemini(image_bytes, normalized_mime)
+        else:
+            b64 = base64.b64encode(image_bytes).decode("utf-8")
+            response = ollama.chat(
+                model=VISION_MODEL,
+                messages=[{
+                    "role": "user",
+                    "content": VISION_PROMPT,
+                    "images": [b64],
+                }],
+            )
+            vision_text = response["message"]["content"]
     except Exception as exc:
         print(f"VISION ERROR: {type(exc).__name__}: {exc}")
         return (
-            "No pude leer la imagen: el modelo de visión local (Ollama / minicpm-v) "
-            "no está disponible. Escribí el nombre o el número de la carta (ej. OGN-195)."
+            "No pude identificar la carta de la imagen. "
+            "Escribí el nombre o el número (ej. Defy, OGN-045)."
         )
-    vision_text = response["message"]["content"]
 
     # Parsear respuesta del vision model
     card_number = ""
     card_name = ""
     energy = ""
-    m = re.search(r'NUMBER:\s*([A-Z]+-\d+)', vision_text)
+    m = re.search(r'NUMBER:\s*([A-Z]+)-(\d+)', vision_text, re.IGNORECASE)
     if m:
-        card_number = m.group(1)
-    m = re.search(r'NAME:\s*(.+)', vision_text)
-    if m:
+        card_number = f"{m.group(1).upper()}-{int(m.group(2)):03d}"
+    m = re.search(r'NAME:\s*(.+)', vision_text, re.IGNORECASE)
+    if m and m.group(1).strip().upper() != "UNKNOWN":
         card_name = m.group(1).strip()
-    m = re.search(r'ENERGY:\s*(\d+)', vision_text)
+    m = re.search(r'ENERGY:\s*(\d+)', vision_text, re.IGNORECASE)
     if m:
         energy = m.group(1)
 
@@ -313,8 +391,10 @@ ENERGY: xxx""",
     if card:
         return format_card_info(card)
 
-    # Fallback: devolver lo que leyó el vision model
-    return f"Carta identificada por visión (no encontrada en DB):\n{vision_text}"
+    return (
+        "La visión no pudo vincular la foto con una carta exacta de cards.json. "
+        "Escribí el nombre completo o el número impreso."
+    )
 
 
 NAME_STOPWORDS = {"the", "of", "and", "de", "del", "la", "el", "los", "las"}
@@ -1206,10 +1286,13 @@ async def ask(
     # 1. Procesar imágenes adjuntas (identificar carta → buscar en DB)
     card_texts = []
     image_cards = []
-    for img_file in images:
+    for img_file in images[:MAX_IMAGES]:
         if img_file.filename:
             img_bytes = await img_file.read()
-            card_text = identify_card_from_image(img_bytes)
+            card_text = identify_card_from_image(
+                img_bytes,
+                img_file.content_type or "application/octet-stream",
+            )
             if card_text:
                 card_texts.append(card_text)
                 number_match = re.search(r"Número:\s*([A-Z]+-\d+)", card_text)
@@ -1349,10 +1432,16 @@ async def ask_stream(
     """Igual que /ask pero envía eventos SSE de progreso al frontend."""
 
     # Leer imágenes ANTES del generator (el body de la request ya no está disponible después)
-    raw_images: list[tuple[str, bytes]] = []
-    for img_file in images:
+    raw_images: list[tuple[str, str, bytes]] = []
+    for img_file in images[:MAX_IMAGES]:
         if img_file.filename:
-            raw_images.append((img_file.filename, await img_file.read()))
+            raw_images.append(
+                (
+                    img_file.filename,
+                    img_file.content_type or "application/octet-stream",
+                    await img_file.read(),
+                )
+            )
 
     async def event_stream():
         def sse(event: str, data: str = "") -> str:
@@ -1363,8 +1452,8 @@ async def ask_stream(
         # 1. Procesar imágenes
         card_texts = []
         image_cards = []
-        for filename, img_bytes in raw_images:
-            card_text = identify_card_from_image(img_bytes)
+        for filename, mime_type, img_bytes in raw_images:
+            card_text = identify_card_from_image(img_bytes, mime_type)
             if card_text:
                 card_texts.append(card_text)
                 number_match = re.search(r"Número:\s*([A-Z]+-\d+)", card_text)
@@ -1509,6 +1598,7 @@ def config():
         "top_k": TOP_K,
         "draft_override": bool(_draft_override),
         "vision_enabled": VISION_ENABLED,
+        "vision_provider": VISION_PROVIDER,
     }
 
 

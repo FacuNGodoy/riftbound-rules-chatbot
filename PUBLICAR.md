@@ -25,11 +25,16 @@ Después avisame y empujamos el código, o seguí B cuando el repo ya tenga arch
    - Branch: `main`
 6. **Environment Variables**:
    - `GEMINI_API_KEY` = tu clave de Google AI Studio (no la dejes visible en el repo)
-   - `RIFTBOUND_VISION` = `0`
+   - `RIFTBOUND_VISION_PROVIDER` = `gemini`
 7. **Create Web Service**
 
-El primer deploy tarda varios minutos (instala Python, Torch CPU e indexa reglas).
+El primer deploy tarda varios minutos. El índice Chroma ya viene construido y
+el servidor no instala PyTorch, porque el plan gratuito tiene 512 MB.
 
 Cuando ponga **Live**, la URL es la de la app. El health check es `/health`.
+
+Gemini recibe las fotos para identificar número y nombre. El backend cruza esa
+identidad con `cards.json`; el texto de reglas de la carta no sale de la memoria
+del modelo.
 
 Si el build falla por RAM o timeout, mandame el log y lo ajustamos.

@@ -20,7 +20,7 @@ GRAY = RGBColor(0x44, 0x44, 0x55)
 
 # Completar cuando existan. El script no inventa URLs vivas.
 GITHUB = "https://github.com/FacuNGodoy/riftbound-rules-chatbot"
-APP_URL = "PENDIENTE — URL de Cloudflare Tunnel (ver README)"
+APP_URL = "https://riftbound-rules-chatbot.onrender.com"
 FIGMA = (
     "https://www.figma.com/make/AGMq8C6qLXKILCSnCtWujt/"
     "Rifbound---Bienvenida--Copy-?t=0m2XhVKWIFPBIlUx-1"
@@ -160,7 +160,7 @@ def draw_architecture(path: Path):
     draw_box(d, (40, 300, 200, 400), "Jugador", font)
     draw_box(d, (250, 300, 430, 400), "Chat web\n(HTML/JS)", font)
     draw_box(d, (480, 280, 700, 420), "FastAPI\norquestador", font)
-    draw_box(d, (760, 40, 1020, 150), "minicpm-v\nvisión LOCAL", font)
+    draw_box(d, (760, 40, 1020, 150), "Gemini Vision\n(Ollama local)", font)
     draw_box(d, (760, 180, 1020, 290), "cards.json\nlógica exacta", font)
     draw_box(d, (760, 320, 1020, 430), "ChromaDB\nmemoria reglas", font)
     draw_box(d, (760, 460, 1020, 570), "Historial RAM\nmemoria de turno", font)
@@ -284,7 +284,7 @@ def build():
 
     t = doc.add_paragraph()
     t.alignment = WD_ALIGN_PARAGRAPH.CENTER
-    r = t.add_run("Juez de mesa con RAG, visión local y verificación de rulings")
+    r = t.add_run("Juez de mesa con RAG, visión de cartas y verificación de rulings")
     set_run_font(r, size=12, italic=True)
 
     t = doc.add_paragraph()
@@ -361,7 +361,8 @@ def build():
         doc,
         "Entrada: texto y, opcionalmente, fotos. El frontend manda FormData a "
         "/ask-stream. FastAPI orquesta. Salida: veredicto, confianza, explicación y citas. "
-        "IA: minicpm-v (visión), Gemini draft y Gemini verifier. Tradicional: búsqueda "
+        "IA: Gemini Vision en producción (minicpm-v local), Gemini draft y verifier. "
+        "Tradicional: búsqueda "
         "de cartas en JSON, Chroma, pineado de mecánicas, atajos determinísticos, "
         "validación de IDs de cita. Memoria persistente de conocimiento: ChromaDB en disco "
         "(reglamento indexado). Memoria de sesión: conversation_history en RAM (últimos "
@@ -389,14 +390,14 @@ def build():
         "visión + Gemini. Lo que se implementó después es el ciclo de decisión (draft → "
         "verifier → re-retrieve), la validación determinística de citas, atajos para "
         "interacciones ya juzgadas, el streaming SSE para no dejar la UI en silencio, "
-        "y la publicación por túnel. La memoria persistente no es un chat histórico en "
+        "y la publicación en Render. La memoria persistente no es un chat histórico en "
         "la nube: es el índice Chroma del reglamento, que sobrevive al reinicio. El "
         "historial de la partida vive en RAM a propósito (privacidad).",
     )
     add_p(doc, "Código Mermaid equivalente (anexo de arquitectura):")
     add_p(
         doc,
-        "flowchart LR  |  U[Jugador] --> UI[Chat web] --> API[FastAPI] --> V[minicpm-v] / C[cards.json] / R[ChromaDB] / H[historial] / D[draft] --> F[verifier] --> UI",
+        "flowchart LR  |  U[Jugador] --> UI[Chat web] --> API[FastAPI] --> V[Gemini Vision / minicpm-v local] / C[cards.json] / R[ChromaDB] / H[historial] / D[draft] --> F[verifier] --> UI",
         italic=True,
         size=10,
     )
@@ -441,8 +442,8 @@ def build():
             ],
             [
                 "Modelo de IA",
-                "Gemini Flash (nube) + minicpm-v (local)",
-                "Qwen3 8B local no obedecía el prompt de juez. Gemma Cloud dio 403. Gemini 2.0 Flash lo retiraron. Flash vigente: gratis y breve. Visión local para no mezclar OCR con el ruling.",
+                "Gemini Flash + Gemini Vision; minicpm-v local",
+                "Qwen3 8B local no obedecía el prompt de juez. Flash vigente: gratis y breve. Gemini solo identifica número/nombre de la foto; cards.json aporta el texto exacto. En local puede usarse minicpm-v.",
             ],
             [
                 "Orquestación",
@@ -451,8 +452,8 @@ def build():
             ],
             [
                 "Despliegue",
-                "PC del estudiante + Cloudflare Tunnel",
-                "Sin VPS ni GPU en la nube. El túnel publica HTTPS. Ollama (fotos) solo existe en esta máquina; en Render se perdería la visión.",
+                "Render (Docker, plan Free)",
+                "Da una URL HTTPS estable sin depender de la PC. El límite de 512 MB obligó a sacar PyTorch: el índice Chroma se construye antes y los embeddings/visión salen por Gemini API.",
             ],
         ],
         col_widths=[3.2, 4.3, 9.5],
@@ -586,12 +587,12 @@ def build():
             [
                 "Fotos y preguntas del jugador",
                 "Privacidad",
-                "No se guardan imágenes ni historial en disco. El historial vive en RAM del proceso. Gemini sí recibe el texto (y el contexto de reglas) en la nube: no es un juez 100 % on-prem.",
+                "No se guardan imágenes ni historial en disco. En producción la foto se envía a Gemini solo para identificar la carta; el historial vive en RAM. En local puede usarse Ollama para que la imagen no salga de la PC.",
             ],
             [
                 "Acceso no autorizado a la URL pública",
                 "Autenticación / superficie",
-                "No hay login: es un juez público de reglas (dato no sensible). El túnel no abre RDP ni el filesystem. Riesgo residual: abuso de cuota Gemini si alguien bombardea /ask.",
+                "No hay login: es un juez público de reglas (dato no sensible). Render expone solo FastAPI, no el filesystem. Riesgo residual: abuso de cuota Gemini si alguien bombardea /ask.",
             ],
             [
                 "Alucinación presentada como regla oficial",
@@ -623,9 +624,9 @@ def build():
                 "Mal: verboso, “contado” por countereado, no nombraba la carta. Descartado.",
             ],
             [
-                "minicpm-v",
+                "Gemini Vision / minicpm-v",
                 "Leer número/nombre de la foto",
-                "Bien en su rol. Al principio mezclaba prints (Kennen sin subtítulo); se cambió el prompt a Name + Subtitle.",
+                "Gemini se usa en Render y minicpm-v localmente. Ambos solo identifican; cards.json es la fuente del texto. Al principio minicpm-v mezclaba prints y se agregó Name + Subtitle.",
             ],
             [
                 "Figma Make / Leonardo",
@@ -650,8 +651,9 @@ def build():
     add_heading(doc, "PARTE 2 — IA local en el proyecto", 1)
     add_p(
         doc,
-        "1. Papel de un LLM/SLM local. Ya hay un SLM local en producción: minicpm-v, "
-        "subagente de visión. No reemplaza a Gemini como juez. Se probó reemplazar el "
+        "1. Papel de un LLM/SLM local. Ya hay un SLM local disponible: minicpm-v, "
+        "subagente de visión. En Render ese rol lo toma Gemini porque no hay GPU, pero "
+        "localmente evita enviar fotos a terceros. No reemplaza a Gemini como juez. Se probó reemplazar el "
         "agente principal con Qwen3 8B y no cumplió el contrato de juez (brevedad, "
         "vocabulario, citar la carta). Un LLM local más capaz (Llama 3.1 70B, etc.) "
         "reemplazaría el draft/verifier para no mandar jugadas de un grupo a Google, "
@@ -660,9 +662,9 @@ def build():
     )
     add_p(
         doc,
-        "2. Aporte al usuario. La visión local sí cambia lo que puede pedir: saca la foto "
-        "de la mesa y no tiene que tipear OGN-195. Es más privado (la imagen no viaja a "
-        "Gemini) y no tiene costo por token de visión. No es más rápido en el ruling: el "
+        "2. Aporte al usuario. La visión cambia lo que puede pedir: saca la foto "
+        "de la mesa y no tiene que tipear OGN-195. La variante local es más privada (la imagen no viaja a "
+        "Gemini) y no tiene costo por token de visión; la variante publicada permite la misma UX sin GPU. No es más rápido en el ruling: el "
         "cuello es Flash + verifier. Un juez 100 % local mejoraría privacidad y seguiría "
         "andando sin internet; hoy, si se corta la API, el bot se abstiene.",
     )
@@ -681,7 +683,7 @@ def build():
         "juez al nivel de Flash. Calidad: Qwen 8B falló el caso de uso. Cuota y retiro de "
         "modelos: el problema de la nube. Mantenimiento: hay que pullear pesos, versionar "
         "Modelfile y re-correr judge_cases.json cada vez que Ollama actualiza. Conclusión: "
-        "híbrido a propósito (visión local, juez en API), no por no haber pensado lo local.",
+        "híbrido a propósito (visión local opcional y visión/juez por API en producción), no por no haber pensado lo local.",
     )
     add_p(
         doc,
