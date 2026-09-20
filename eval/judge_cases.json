@@ -1,0 +1,83 @@
+[
+  {
+    "id": 1,
+    "tags": ["printed-cost", "empower", "206"],
+    "question": "Si hago empower a Tail-Cloaked Matriarch, ¿puedo jugar Rhasa the Sunderer si el coste está reducido?",
+    "expected": "no",
+    "expected_verdict": "NO",
+    "must_mention": ["206"],
+    "why": "Matriarch pide Energy impreso ≤ 3. Rhasa tiene Energy 10 impreso. La reducción por trash no cambia el coste impreso (regla 206).",
+    "cards": ["VEN-104", "OGN-195"]
+  },
+  {
+    "id": 2,
+    "tags": ["might", "equipment", "current-might"],
+    "question": "Si juego Deathgrip y selecciono una unidad con equipment, ¿copia el Might con los gears?",
+    "expected": "si",
+    "expected_verdict": "SI",
+    "must_mention": [["710", "137.3"]],
+    "why": "Deathgrip da +Might igual a 'its Might'. En board se usa Might actual (710), que incluye gears. No dice printed Might. Sirve citar 710 (Might actual) o 137.3 (el Might Bonus modula la Might de la carta de arriba): las dos sostienen el ruling.",
+    "cards": ["SFD-163"]
+  },
+  {
+    "id": 3,
+    "tags": ["hidden", "811.1.d", "targeting"],
+    "question": "Si juego de Hidden a Kennen, Keeper of Balance, ¿puede stunear cualquier battlefield?",
+    "expected": "no",
+    "expected_verdict": "NO",
+    "must_mention": ["811.1"],
+    "why": "Play effect desde Hidden: los targets tienen que estar en el mismo battlefield (811.1.d.2). Solo stunear ahí.",
+    "cards": ["VEN-135"]
+  },
+  {
+    "id": 4,
+    "tags": ["repeat", "counter", "820"],
+    "question": "Si counterean (Defy) un spell con Repeat, ¿se puede usar el Repeat igual?",
+    "expected": "no",
+    "expected_verdict": "NO",
+    "must_mention": ["820.1"],
+    "why": "Repeat ejecuta el efecto una vez más al resolverse (820.1.d). Si lo counterean, no hay resolution.",
+    "cards": ["OGN-045"]
+  },
+  {
+    "id": 5,
+    "tags": ["i-means-the-card", "combat-win", "053"],
+    "question": "Si Nidalee, Cat Form muere en combate pero quedan unidades en el battlefield, ¿roba igual?",
+    "expected": "no",
+    "expected_verdict": "NO",
+    "must_mention": [],
+    "why": "Nidalee dice 'When I win a combat, draw 1. (I win if I remain after combat.)'. I = esta carta. Si muere, no permanece. No hay número de regla: el ruling sale del texto de la carta.",
+    "cards": ["UNL-114"]
+  },
+  {
+    "id": 6,
+    "tags": ["play-location", "attacker-defender", "355", "464"],
+    "question": "Si durante un showdown descarto Flame Chompers, ¿la puedo jugar al battlefield?",
+    "expected": "defendiendo si, atacando no",
+    "expected_verdict": null,
+    "must_mention": ["355", "464"],
+    "why": "Jugar unidad pide ubicación válida: base o battlefield que controlás (355). El atacante no controla el BF contested (464). Chompers no cambia eso. La respuesta correcta depende del lado, así que no se puntúa por veredicto SI/NO.",
+    "cards": ["OGN-006"]
+  },
+  {
+    "id": 7,
+    "tags": ["deathknell", "combat-cleanup", "320", "323.4", "466.1"],
+    "question": "Windswept Hillock. Defiendo con Ruined Rex y Glasc Mixologist. El rival ataca con Master Yi, Tempered (5 Might) y Steel Paws empowered (9 Might). El rival dice: se asigna el daño, se curan, y después triggerean Deathknell. Yo digo: se asigna el daño, Deathknell triggerea y se resuelve, y después se curan. Si Rex (Deathknell Deal 4) se resuelve antes del heal, Yi muere; si después, Yi sobrevive. ¿Cómo se resuelve?",
+    "expected": "yi sobrevive",
+    "expected_verdict": null,
+    "must_mention": ["320"],
+    "why": "Ninguna de las dos lecturas es correcta. Deathknell TRIGGEREA en Cleanup 3a (antes del heal) pero se RESUELVE después del heal: durante Cleanup no se puede resolver la chain (320). Yi se cura a 0 y después recibe 4 sobre 5 Might → sobrevive. No es SI/NO: la pregunta es cuál de dos secuencias vale.",
+    "cards": ["OGN-297", "UNL-067", "SFD-165", "UNL-113", "VEN-043", "UNL-191"]
+  },
+  {
+    "id": 8,
+    "tags": ["hidden-blade", "zhonya", "replacement", "linked-instructions", "359.3.e.14"],
+    "question": "Si le tiro Hidden Blade a una unidad enemiga y tiene Zhonya's Hourglass, ¿roba igual?",
+    "expected": "si",
+    "expected_verdict": "SI",
+    "must_mention": [],
+    "deterministic": true,
+    "why": "Hidden Blade es 'Kill a unit. Its controller draws 2.' Instrucciones linked. Zhonya REEMPLAZA el kill (heal+exhaust+recall) pero el kill se consideró ejecutado: el draw no referencia el action ('If you do'), así que se resuelve (359.3.e.14.b). Flash/Retreat sacan la unidad ANTES de resolver → mistarget → no hay kill → no roba (359.3.e.14.a). Distinto de Deathgrip, que sí dice 'If you do'. OJO: este caso lo intercepta deterministic_ruling() y no llega al LLM, así que verifica que el atajo siga conectado, no el razonamiento del modelo.",
+    "cards": ["OGN-213", "OGN-077", "OGS-011", "OGN-104"]
+  }
+]

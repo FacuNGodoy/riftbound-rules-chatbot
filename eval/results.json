@@ -1,0 +1,50 @@
+{
+  "timestamp": "2026-08-27T09:43:38",
+  "config": {
+    "draft_models": [
+      "gemini-3.7-flash",
+      "gemini-3.6-flash",
+      "gemini-3.5-flash",
+      "gemini-3-flash-preview",
+      "gemini-2.5-flash",
+      "gemini-3.5-flash-lite"
+    ],
+    "verifier_models": [
+      "gemini-3.5-flash-lite",
+      "gemini-3.1-flash-lite",
+      "gemini-3.6-flash"
+    ],
+    "top_k": 12,
+    "draft_override": false
+  },
+  "passed": 1,
+  "total": 1,
+  "pct": 100.0,
+  "results": [
+    {
+      "id": 2,
+      "tags": [
+        "might",
+        "equipment",
+        "current-might"
+      ],
+      "deterministic": false,
+      "verdict": "SI",
+      "expected_verdict": "SI",
+      "verdict_ok": true,
+      "confidence": "ALTA",
+      "citations": 3,
+      "citation_titles": [
+        "Deathgrip",
+        "Regla 137.3",
+        "Regla 137.3.a"
+      ],
+      "rules_found": [
+        "137.3"
+      ],
+      "rules_missing": [],
+      "passed": true,
+      "answer": "Sí, Deathgrip toma en cuenta el Might total actual de la unidad destruida, incluyendo los bonos otorgados por equipos (gears) adjuntos. Según las reglas, el Might Bonus de un equipo adjunto modula el Might de la unidad mientras permanece adjunta, por lo que el valor de su Might al momento de ser destruida incluye dichas modificaciones."
+    }
+  ]
+}
