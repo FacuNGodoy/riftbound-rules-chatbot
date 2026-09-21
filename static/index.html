@@ -7,32 +7,63 @@
     <link rel="stylesheet" href="/static/style.css">
 </head>
 <body>
+    <div class="backdrop" aria-hidden="true"></div>
+    <div class="side-ornament left" aria-hidden="true"></div>
+    <div class="side-ornament right" aria-hidden="true"></div>
+
     <div class="container">
         <header>
-            <h1>Riftbound Rules Chatbot</h1>
-            <p class="subtitle">Consultá las reglas del juego de cartas Riftbound</p>
+            <div class="brand">
+                <span class="brand-mark" aria-hidden="true">
+                    <svg viewBox="0 0 48 48" width="42" height="42">
+                        <circle cx="24" cy="24" r="21" fill="none" stroke="currentColor" stroke-width="2"/>
+                        <path d="M24 8v32M16 18h16M16 30h16" stroke="currentColor" stroke-width="2" fill="none"/>
+                        <path d="M18 14h12l-2 8H20z" fill="currentColor" opacity="0.9"/>
+                    </svg>
+                </span>
+                <div>
+                    <p class="eyebrow">Juez de mesa · no oficial</p>
+                    <h1>Riftbound Rules Chatbot</h1>
+                    <p class="subtitle">Reglas, timing e interacciones. Citá el reglamento, no la intuición.</p>
+                </div>
+            </div>
+            <ul class="badges">
+                <li>Reglas oficiales</li>
+                <li>~960 cartas</li>
+                <li>Ruling verificado</li>
+            </ul>
         </header>
 
-        <div id="chat" class="chat-box">
-            <div class="message bot">
-                <p>¡Hola! Soy el asistente de reglas de Riftbound. Preguntame lo que quieras sobre el juego. Podés adjuntar imágenes de cartas con el botón o pegándolas con Ctrl+V.</p>
+        <div class="panel">
+            <div id="chat" class="chat-box">
+                <div class="message bot">
+                    <p>¡Hola! Soy el asistente de reglas de Riftbound. Preguntame lo que quieras sobre el juego. Podés adjuntar imágenes de cartas con el botón o pegándolas con Ctrl+V.</p>
+                </div>
             </div>
+
+            <div id="examples" class="examples">
+                <button type="button" class="example" data-query="¿Defy cancela un spell de coste 3?">¿Defy cancela un spell de coste 3?</button>
+                <button type="button" class="example" data-query="Si un Deathknell se dispara en combate, ¿se resuelve antes o después del heal de Cleanup?">¿Cuándo se resuelve Deathknell?</button>
+                <button type="button" class="example" data-query="Si counterean un spell con Repeat, ¿se puede usar el Repeat igual?">Repeat + Defy</button>
+            </div>
+
+            <div id="preview" class="image-preview"></div>
+
+            <form id="form" class="input-area">
+                <label class="attach-btn" title="Adjuntar imagen">
+                    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
+                        <circle cx="8.5" cy="8.5" r="1.5"/>
+                        <polyline points="21 15 16 10 5 21"/>
+                    </svg>
+                    <input type="file" id="file-input" accept="image/*" multiple hidden />
+                </label>
+                <textarea id="input" placeholder="Escribí tu pregunta o adjuntá una carta..." rows="1" autocomplete="off"></textarea>
+                <button type="submit" id="btn">Enviar</button>
+            </form>
         </div>
 
-        <div id="preview" class="image-preview"></div>
-
-        <form id="form" class="input-area">
-            <label class="attach-btn" title="Adjuntar imagen">
-                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
-                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"/>
-                    <circle cx="8.5" cy="8.5" r="1.5"/>
-                    <polyline points="21 15 16 10 5 21"/>
-                </svg>
-                <input type="file" id="file-input" accept="image/*" multiple hidden />
-            </label>
-            <textarea id="input" placeholder="Escribí tu pregunta..." rows="1" autocomplete="off"></textarea>
-            <button type="submit" id="btn">Enviar</button>
-        </form>
+        <p class="footer-note">Asistente no oficial. Para un torneo, el Head Judge tiene la última palabra.</p>
     </div>
     <script src="/static/script.js"></script>
 </body>

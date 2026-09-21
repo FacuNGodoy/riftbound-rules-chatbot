@@ -7,6 +7,7 @@ const btn = document.getElementById("btn");
 const fileInput = document.getElementById("file-input");
 const preview = document.getElementById("preview");
 const attachBtn = document.querySelector(".attach-btn");
+const examples = document.getElementById("examples");
 
 let pendingImages = [];
 let visionEnabled = true;
@@ -22,11 +23,21 @@ fetch("/config")
             const hello = document.querySelector(".message.bot p");
             if (hello) {
                 hello.textContent =
-                    "¡Hola! Soy el asistente de reglas de Riftbound. Preguntame por nombre de carta (Defy, Hidden Blade) o por número (OGN-045). En esta versión publicada no se adjuntan fotos.";
+                    "¡Hola! Soy el asistente de reglas de Riftbound. Preguntame por nombre de carta (Defy, Hidden Blade) o por número (OGN-045). En esta versión no se adjuntan fotos.";
             }
         }
     })
     .catch(() => {});
+
+if (examples) {
+    examples.addEventListener("click", (e) => {
+        const chip = e.target.closest(".example");
+        if (!chip || btn.disabled) return;
+        input.value = chip.dataset.query || chip.textContent;
+        input.dispatchEvent(new Event("input"));
+        form.requestSubmit();
+    });
+}
 
 const loadingMessages = [
     "Pensando...",
@@ -287,6 +298,7 @@ form.addEventListener("submit", async (e) => {
     input.style.height = "auto";
     clearPreview();
     btn.disabled = true;
+    if (examples) examples.hidden = true;
 
     const loadingInterval = showLoading();
 
