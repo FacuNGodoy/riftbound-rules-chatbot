@@ -25,7 +25,7 @@ FIGMA = (
     "https://www.figma.com/make/AGMq8C6qLXKILCSnCtWujt/"
     "Rifbound---Bienvenida--Copy-?t=0m2XhVKWIFPBIlUx-1"
 )
-VIDEO = "Opcional — se carga si hay demo de ≤ 3 min"
+VIDEO = "https://youtu.be/I7B1EFWfUKE"
 
 
 def set_run_font(run, size=11, bold=False, color=None, name="Calibri", italic=False):
@@ -312,9 +312,8 @@ def build():
     )
     add_p(
         doc,
-        "Si la URL pública figura como PENDIENTE al exportar este PDF, completar "
-        "después de levantar Cloudflare Tunnel (start_publico.bat + cloudflared) "
-        "y volver a generar el informe.",
+        "La app está publicada en Render. El primer acceso después de un rato inactivo "
+        "puede tardar ~50 s (plan gratuito). Abrir la URL antes de la corrección.",
         italic=True,
         size=10,
     )
@@ -463,21 +462,41 @@ def build():
     add_heading(doc, "Sección 4 · Evidencia de funcionamiento", 2)
     add_p(
         doc,
-        "La UI de producción es el chat (el valor está en la respuesta, no en un onboarding). "
-        "Las tres pantallas de diseño (bienvenida, chat, config) están en Figma; abajo se "
-        "reusan esas capturas y el flujo real del prototipo funcional.",
+        "Capturas de la aplicación publicada en Render "
+        "(https://riftbound-rules-chatbot.onrender.com), no de un mock. "
+        "El flujo: el jugador entra, pregunta o adjunta una carta, y obtiene veredicto, "
+        "confianza, explicación y evidencia clicable.",
+    )
+    prod1 = FIG / "prod_defy.jpg"
+    prod2 = FIG / "prod_repeat.jpg"
+    add_image(doc, prod1, 6.2)
+    add_caption(
+        doc,
+        "Figura 4. Producción: foto de Defy identificada por Gemini Vision. "
+        "Veredicto SI, confianza ALTA, evidencia Defy (cards.json) y regla 206.",
+    )
+    add_image(doc, prod2, 6.2)
+    add_caption(
+        doc,
+        "Figura 5. Producción: Repeat + Defy. Veredicto NO, reglas 425.1 y 820.1: "
+        "si el hechizo es countereado no hay resolución y Repeat no se ejecuta.",
+    )
+    add_p(
+        doc,
+        "Las tres pantallas de diseño (bienvenida, chat, config) siguen en Figma; "
+        "abajo se conservan como prototipo de interfaz, no como el sitio live.",
     )
     f1 = FIG / "tp1_p4_1.png"
     f2 = FIG / "tp1_p4_2.png"
     f3 = FIG / "tp1_p5_1.png"
-    add_image(doc, f1, 5.6)
-    add_caption(doc, "Figura 4. Home / bienvenida (prototipo Figma).")
-    add_image(doc, f2, 5.6)
-    add_caption(doc, "Figura 5. Flujo principal: el jugador pregunta y adjunta carta.")
-    add_image(doc, f3, 5.6)
+    add_image(doc, f1, 5.2)
+    add_caption(doc, "Figura 6. Home / bienvenida (prototipo Figma).")
+    add_image(doc, f2, 5.2)
+    add_caption(doc, "Figura 7. Flujo principal de consulta (prototipo Figma).")
+    add_image(doc, f3, 5.2)
     add_caption(
         doc,
-        "Figura 6. Configuración objetivo (modelo breve vs juez detallado). En el código actual el modo es siempre juez con citas.",
+        "Figura 8. Configuración objetivo (Figma). En producción el modo es siempre juez con citas.",
     )
     add_p(
         doc,
@@ -535,7 +554,7 @@ def build():
             [
                 "Flexibilidad y eficiencia",
                 "Parcial",
-                "Ctrl+V de fotos, números OGN-xxx. No hay atajos de ‘casos frecuentes’ en producción (sí en Figma como chips).",
+                "Ctrl+V de fotos, números OGN-xxx y chips de ejemplo (Defy, Deathknell, Repeat).",
             ],
             [
                 "Estético y minimalista",
@@ -699,7 +718,7 @@ def build():
     leonardo = FIG / "tp1_p6_1.png"
     if leonardo.exists():
         add_image(doc, leonardo, 4.0)
-        add_caption(doc, "Figura 7. Exploración de estilo (Leonardo.ai) de la entrega anterior: paleta, no el producto.")
+        add_caption(doc, "Figura 9. Exploración de estilo (Leonardo.ai) de la entrega anterior: paleta, no el producto.")
 
     doc.add_page_break()
     add_heading(doc, "Anexo A · Cómo reproducir", 2)

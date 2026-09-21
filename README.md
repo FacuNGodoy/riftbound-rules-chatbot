@@ -68,6 +68,8 @@ En Render, Gemini identifica la foto y el backend cruza nombre/número contra
 primer request después de un rato inactivo puede tardar ~1 minuto (la instancia
 se duerme).
 
+Demo (≤ 3 min): https://youtu.be/I7B1EFWfUKE
+
 ## Evaluación automática
 
 Con el server arriba:
