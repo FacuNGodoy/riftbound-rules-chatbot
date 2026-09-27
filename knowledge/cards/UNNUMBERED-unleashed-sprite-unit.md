@@ -1,0 +1,33 @@
+---
+title: "Sprite"
+id: "UNNUMBERED-unleashed-sprite-unit"
+kind: "card"
+printed_number: ""
+card_type: "Unit"
+set: "Unleashed"
+tags: ["riftbound", "knowledge/card"]
+aliases: ["Sprite"]
+source: "cards.json"
+source_hash: "64cdf7ca3165837aea40bb345621acbf9978a40321400743a6230021a6a6793f"
+generated: true
+confidence: "exact"
+---
+
+# Sprite
+
+**ID interno:** `UNNUMBERED-unleashed-sprite-unit` (sin número impreso)
+**Tipo:** Unit
+**Set:** Unleashed
+**Stats:** Might 3
+
+## Texto
+
+[Temporary] (Kill me at the start of your Beginning Phase, before scoring.)
+
+## Mecánicas relacionadas
+
+- [[mechanics/kill|Kill]]
+- [[mechanics/triggered-ability|Triggered abilities]]
+
+> [!INFO] Nota generada
+> Regenerar con `python generate_knowledge_vault.py`; no editar manualmente.

@@ -53,6 +53,7 @@ def grade(case: dict, resp: dict) -> dict:
         "expected_verdict": expected,
         "verdict_ok": verdict_ok,
         "confidence": resp.get("confidence", ""),
+        "route": resp.get("route", ""),
         "citations": len(titles),
         "citation_titles": titles,
         "rules_found": found,
@@ -113,6 +114,7 @@ def main():
                 "expected_verdict": case.get("expected_verdict"),
                 "verdict_ok": False,
                 "confidence": "",
+                "route": "",
                 "citations": 0,
                 "citation_titles": [],
                 "rules_found": [],
@@ -134,7 +136,8 @@ def main():
             f"    {'OK  ' if res['passed'] else 'FAIL'} "
             f"veredicto={res['verdict'] or '-'} "
             f"esperado={case.get('expected_verdict') or 'n/a'} "
-            f"conf={res['confidence'] or '-'} citas={res['citations']}"
+            f"conf={res['confidence'] or '-'} ruta={res['route'] or '-'} "
+            f"citas={res['citations']}"
         )
         if res["rules_missing"]:
             print(f"    faltan reglas: {', '.join(res['rules_missing'])}")
@@ -151,7 +154,10 @@ def main():
     pct = 100 * passed / total if total else 0.0
 
     print("\n" + "=" * 74)
-    header = f"{'id':<5}{'veredicto':<14}{'esperado':<12}{'conf':<8}{'citas':<7}{'res'}"
+    header = (
+        f"{'id':<5}{'veredicto':<14}{'esperado':<12}"
+        f"{'conf':<8}{'ruta':<15}{'citas':<7}{'res'}"
+    )
     print(header)
     print("-" * 74)
     for r in results:
@@ -159,7 +165,7 @@ def main():
         print(
             f"{str(r['id']) + flag:<5}{r['verdict'] or '-':<14}"
             f"{r['expected_verdict'] or 'n/a':<12}"
-            f"{r['confidence'] or '-':<8}{r['citations']:<7}"
+            f"{r['confidence'] or '-':<8}{r['route'] or '-':<15}{r['citations']:<7}"
             f"{'OK' if r['passed'] else 'FAIL'}"
         )
     print("-" * 74)

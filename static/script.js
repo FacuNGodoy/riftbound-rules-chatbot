@@ -59,6 +59,7 @@ const loadingMessages = [
 
 const statusLabels = {
     searching: "Buscando reglas y cartas...",
+    graph: "Conectando cartas, mecánicas y reglas...",
     draft: "Generando respuesta...",
     draft_retry: "Reintentando con más contexto...",
     verify: "Verificando ruling...",

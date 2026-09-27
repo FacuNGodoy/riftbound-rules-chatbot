@@ -1,0 +1,60 @@
+{
+  "version": 1,
+  "node_kinds": {
+    "card": {
+      "id": "número impreso o ID interno estable para tokens sin número",
+      "required": [
+        "id",
+        "name",
+        "text",
+        "mechanics",
+        "source"
+      ]
+    },
+    "rule": {
+      "id": "número exacto de regla",
+      "required": [
+        "id",
+        "text",
+        "section",
+        "source"
+      ]
+    },
+    "mechanic": {
+      "id": "slug estable",
+      "required": [
+        "id",
+        "title",
+        "facts",
+        "source"
+      ]
+    }
+  },
+  "edge_types": {
+    "USES_MECHANIC": "card -> mechanic",
+    "GOVERNED_BY": "mechanic -> rule",
+    "TRIGGERS_AFTER": "mechanic -> mechanic|event",
+    "OCCURS_BEFORE": "mechanic|event -> mechanic|event",
+    "RESOLVES_BEFORE": "mechanic|event -> mechanic|event",
+    "READS_CURRENT_VALUE": "card|mechanic -> property",
+    "REPLACES": "card|mechanic -> mechanic|event",
+    "PREVENTS": "card|mechanic -> mechanic|event",
+    "REQUIRES": "card|mechanic -> mechanic|event|property",
+    "TARGETS": "card|mechanic -> object-kind",
+    "MODIFIES": "card|mechanic -> property",
+    "LINKED_TO": "card|rule|mechanic -> card|rule|mechanic"
+  },
+  "edge_required": [
+    "source",
+    "target",
+    "type",
+    "provenance",
+    "confidence"
+  ],
+  "confidence_values": [
+    "exact",
+    "curated",
+    "inferred",
+    "ambiguous"
+  ]
+}

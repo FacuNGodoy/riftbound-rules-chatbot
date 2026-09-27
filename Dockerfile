@@ -15,9 +15,10 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir --upgrade pip \
     && pip install --no-cache-dir -r requirements.txt
 
-COPY app.py embeddings.py cards.json start.sh ./
+COPY app.py embeddings.py knowledge_resolver.py cards.json start.sh ./
 COPY static/ static/
 COPY chroma_db/ chroma_db/
+COPY knowledge/knowledge_graph.json knowledge/knowledge_graph.json
 
 RUN chmod +x start.sh
 

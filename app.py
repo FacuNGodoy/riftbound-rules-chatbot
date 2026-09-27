@@ -19,6 +19,7 @@ import chromadb
 from google import genai
 from google.genai import types
 from embeddings import make_embedding_function
+from knowledge_resolver import GRAPH_SYSTEM_PROMPT, KnowledgeResolver
 
 BASE_DIR = Path(__file__).resolve().parent
 load_dotenv(BASE_DIR / ".env")
@@ -26,6 +27,7 @@ load_dotenv(BASE_DIR / ".env")
 CHROMA_DIR = BASE_DIR / "chroma_db"
 STATIC_DIR = BASE_DIR / "static"
 CARDS_FILE = BASE_DIR / "cards.json"
+KNOWLEDGE_GRAPH_FILE = BASE_DIR / "knowledge" / "knowledge_graph.json"
 COLLECTION_NAME = "riftbound_rules"
 GEMINI_API_KEY = os.environ.get("GEMINI_API_KEY", "").strip()
 if not GEMINI_API_KEY:
@@ -92,8 +94,13 @@ MAX_IMAGE_BYTES = 8 * 1024 * 1024
 MAX_IMAGES = 3
 ALLOWED_IMAGE_TYPES = {"image/jpeg", "image/png", "image/webp", "image/gif"}
 MODEL_TIMEOUT_SECONDS = 150
+# Gemini 3 razona sin tope si no se lo pedís, y esa pasada es casi todo el tiempo
+# de una consulta. LOW es el mínimo que acepta gemini-3.7-flash. El verificador
+# sigue con el razonamiento por defecto: es la pasada que contrasta el borrador.
+DRAFT_THINKING_LEVEL = "LOW"
 
 gemini_client = genai.Client(api_key=GEMINI_API_KEY)
+knowledge_resolver = KnowledgeResolver(KNOWLEDGE_GRAPH_FILE)
 TOP_K = 12
 
 SYSTEM_PROMPT = """Sos un asistente experto en las reglas del juego de cartas Riftbound.
@@ -515,7 +522,7 @@ ATTACHMENT_TRIGGERS = [
 ]
 
 KEYWORD_ENRICHMENT = {
-    "jugar|play|jugarlo|jugarla|invocar": "play unit valid location battlefield base",
+    "jugar|juega|play|plays|jugarlo|jugarla|invocar": "play unit valid location battlefield base when a player plays a spell trigger after resolution 419.4",
     "atacar|attack|atacando|attacker": "attacker contested status control battlefield",
     "defender|defend|defendiendo|defensor": "defender control battlefield",
     "descart|discard": "discard play unit valid location",
@@ -546,6 +553,17 @@ KEYWORD_ENRICHMENT = {
 
 # Búsquedas extra que fuerzan las reglas clave cuando el retrieval semántico se desvía.
 MECHANIC_QUERIES = [
+    {
+        "match": [
+            "cuando juega", "cuando un jugador juega", "when a player plays",
+            "juega el spell", "juega un spell", "plays a spell",
+        ],
+        "queries": [
+            "Abilities trigger when cards are played after resolution 419.4",
+            "trigger when the act of playing the card has been completed by resolution 419.4.a",
+            "countered card play trigger will not trigger 419.4.a.1",
+        ],
+    },
     {
         "match": ["deathknell", "deathkneel", "knell"],
         "queries": [
@@ -600,6 +618,15 @@ MECHANIC_QUERIES = [
 
 # Marcadores de reglas que el embedding suele perder. Se inyectan por texto exacto.
 CRITICAL_RULE_MARKERS = {
+    "**419.4.a.**": [
+        "cuando juega", "cuando un jugador juega", "when a player plays",
+        "juega el spell", "juega un spell", "plays a spell",
+        "abandoned hall",
+    ],
+    "**419.4.a.1.**": [
+        "cuando juega", "when a player plays", "counter", "countere",
+        "abandoned hall",
+    ],
     "**320.**": ["deathknell", "deathkneel", "knell", "cleanup", "curan", "curacion"],
     "**323.4.**": ["deathknell", "deathkneel", "knell", "cleanup", "lethal", "muere", "muerte", "curan"],
     "**465.3.**": ["deathknell", "deathkneel", "knell", "combat", "combate", "cleanup", "curan"],
@@ -965,6 +992,7 @@ def generate_with_fallback(
     system_instruction: str,
     history: list[dict] | None = None,
     models: list[str] | None = None,
+    thinking_level: str | None = None,
 ) -> str:
     """Pide una respuesta probando cada modelo hasta que uno tenga cuota disponible."""
     chain = models or DRAFT_MODELS
@@ -977,6 +1005,9 @@ def generate_with_fallback(
         system_instruction=system_instruction,
         # El SDK nuevo pide el timeout en milisegundos.
         http_options=types.HttpOptions(timeout=MODEL_TIMEOUT_SECONDS * 1000),
+        thinking_config=(
+            types.ThinkingConfig(thinking_level=thinking_level) if thinking_level else None
+        ),
     )
     last_exc: Exception | None = None
     for model_name in available:
@@ -1011,6 +1042,21 @@ def generate_with_fallback(
                     break  # pasar al siguiente modelo
                 raise
     raise last_exc
+
+
+def generate_graph_review(query: str, resolution: dict) -> dict | None:
+    """Una sola pasada sobre evidencia y relaciones ya validadas por el grafo."""
+    raw = generate_with_fallback(
+        resolution["context"],
+        GRAPH_SYSTEM_PROMPT,
+        thinking_level=DRAFT_THINKING_LEVEL,
+    )
+    parsed = parse_json_response(raw)
+    if parsed is None:
+        print(f"GRAPH: respuesta no parseable: {raw[:400]!r}")
+        return None
+    parsed["graph_query"] = query
+    return parsed
 
 
 def verify_ruling(
@@ -1205,7 +1251,9 @@ def finalize_ruling(
         requested_ids = []
     valid_ids = []
     for item_id in requested_ids:
-        normalized = str(item_id).strip().replace("Regla ", "")
+        # Los modelos a veces copian el formato visual de la evidencia ("[419.4.a]")
+        # o anteponen "Regla". Ambos representan el mismo ID exacto.
+        normalized = str(item_id).strip().strip("[]` ").replace("Regla ", "").strip()
         if normalized in evidence and normalized not in valid_ids:
             valid_ids.append(normalized)
     citations = [evidence[item_id] for item_id in valid_ids]
@@ -1324,6 +1372,16 @@ async def ask(
         metadatas,
         list(evidence_cards.values()),
     )
+    graph_resolution = knowledge_resolver.resolve(
+        query, [*mentioned_cards, *image_cards]
+    )
+    if graph_resolution:
+        evidence.update(graph_resolution["evidence"])
+        print(
+            "GRAPH: cobertura completa "
+            f"({', '.join(graph_resolution['mechanics'])}; "
+            f"{graph_resolution['context_chars']} chars)"
+        )
 
     # 4. Armar contexto
     pinned = get_pinned_ruling(query)
@@ -1343,13 +1401,36 @@ async def ask(
 
     followup_used = ""
     if ambiguities:
+        route = "ambiguity"
         ruling = ambiguity_ruling(ambiguities)
     else:
         review = deterministic_ruling(query)
-        if review is None:
+        route = "deterministic" if review is not None else "rag"
+        ruling = None
+        if review is None and graph_resolution:
+            try:
+                graph_review = generate_graph_review(query, graph_resolution)
+                if graph_review is not None:
+                    candidate = finalize_ruling(graph_review, evidence, query)
+                    if candidate["verdict"] != "NO_RESUELTO":
+                        ruling = candidate
+                        route = "graph"
+                        print("GRAPH: ruling resuelto sin segunda llamada LLM")
+                    else:
+                        print(
+                            "GRAPH: abstención; fallback al RAG "
+                            f"(verdict={graph_review.get('verdict')}, "
+                            f"supported={graph_review.get('supported')}, "
+                            f"citations={graph_review.get('citations')}, "
+                            f"missing={graph_review.get('missing_info')!r})"
+                        )
+            except Exception as exc:
+                print(f"GRAPH ERROR: {type(exc).__name__}: {exc}; fallback al RAG")
+        if review is None and ruling is None:
             try:
                 draft = generate_with_fallback(
-                    user_message, SYSTEM_PROMPT, gemini_history
+                    user_message, SYSTEM_PROMPT, gemini_history,
+                    thinking_level=DRAFT_THINKING_LEVEL,
                 )
                 review = verify_ruling(query, draft, evidence)
 
@@ -1385,7 +1466,8 @@ async def ask(
                             chunks, card_texts, ambiguities, pinned, query
                         )
                         retry_draft = generate_with_fallback(
-                            retry_message, SYSTEM_PROMPT, gemini_history
+                            retry_message, SYSTEM_PROMPT, gemini_history,
+                            thinking_level=DRAFT_THINKING_LEVEL,
                         )
                         retry_review = verify_ruling(query, retry_draft, evidence)
                         # Nos quedamos con la segunda solo si dejó de abstenerse.
@@ -1401,7 +1483,8 @@ async def ask(
                     "citations": [],
                     "missing_info": describe_model_failure(exc),
                 }
-        ruling = finalize_ruling(review, evidence, query)
+        if ruling is None:
+            ruling = finalize_ruling(review, evidence, query)
 
     answer_text = ruling["answer"]
     sources = sorted({citation["source"] for citation in ruling["citations"]})
@@ -1421,6 +1504,7 @@ async def ask(
         "missing_info": ruling["missing_info"],
         "challenge": ruling.get("challenge", ""),
         "followup_query": followup_used,
+        "route": route,
     }
 
 
@@ -1481,6 +1565,16 @@ async def ask_stream(
         evidence = build_evidence_catalog(
             chunks, metadatas, list(evidence_cards.values()),
         )
+        graph_resolution = knowledge_resolver.resolve(
+            query, [*mentioned_cards, *image_cards]
+        )
+        if graph_resolution:
+            evidence.update(graph_resolution["evidence"])
+            print(
+                "GRAPH: cobertura completa "
+                f"({', '.join(graph_resolution['mechanics'])}; "
+                f"{graph_resolution['context_chars']} chars)"
+            )
 
         # 4-5. Contexto y mensaje
         pinned = get_pinned_ruling(query)
@@ -1496,14 +1590,40 @@ async def ask_stream(
         # 6. Generar
         followup_used = ""
         if ambiguities:
+            route = "ambiguity"
             ruling = ambiguity_ruling(ambiguities)
         else:
             review = deterministic_ruling(query)
-            if review is None:
+            route = "deterministic" if review is not None else "rag"
+            ruling = None
+            if review is None and graph_resolution:
+                try:
+                    yield sse("status", "graph")
+                    graph_review = generate_graph_review(query, graph_resolution)
+                    if graph_review is not None:
+                        candidate = finalize_ruling(graph_review, evidence, query)
+                        if candidate["verdict"] != "NO_RESUELTO":
+                            ruling = candidate
+                            route = "graph"
+                            print("GRAPH: ruling resuelto sin segunda llamada LLM")
+                        else:
+                            print(
+                                "GRAPH: abstención; fallback al RAG "
+                                f"(verdict={graph_review.get('verdict')}, "
+                                f"supported={graph_review.get('supported')}, "
+                                f"citations={graph_review.get('citations')}, "
+                                f"missing={graph_review.get('missing_info')!r})"
+                            )
+                except Exception as exc:
+                    print(
+                        f"GRAPH ERROR: {type(exc).__name__}: {exc}; fallback al RAG"
+                    )
+            if review is None and ruling is None:
                 try:
                     yield sse("status", "draft")
                     draft = generate_with_fallback(
-                        user_message, SYSTEM_PROMPT, gemini_history
+                        user_message, SYSTEM_PROMPT, gemini_history,
+                        thinking_level=DRAFT_THINKING_LEVEL,
                     )
                     yield sse("status", "verify")
                     review = verify_ruling(query, draft, evidence)
@@ -1533,7 +1653,8 @@ async def ask_stream(
                             )
                             yield sse("status", "draft_retry")
                             retry_draft = generate_with_fallback(
-                                retry_message, SYSTEM_PROMPT, gemini_history
+                                retry_message, SYSTEM_PROMPT, gemini_history,
+                                thinking_level=DRAFT_THINKING_LEVEL,
                             )
                             yield sse("status", "verify")
                             retry_review = verify_ruling(query, retry_draft, evidence)
@@ -1549,7 +1670,8 @@ async def ask_stream(
                         "citations": [],
                         "missing_info": describe_model_failure(exc),
                     }
-            ruling = finalize_ruling(review, evidence, query)
+            if ruling is None:
+                ruling = finalize_ruling(review, evidence, query)
 
         answer_text = ruling["answer"]
         sources = sorted({citation["source"] for citation in ruling["citations"]})
@@ -1567,6 +1689,7 @@ async def ask_stream(
             "missing_info": ruling["missing_info"],
             "challenge": ruling.get("challenge", ""),
             "followup_query": followup_used,
+            "route": route,
         }, ensure_ascii=False)
         yield sse("result", result)
 
@@ -1597,6 +1720,7 @@ def config():
         "verifier_models": VERIFIER_MODELS,
         "top_k": TOP_K,
         "draft_override": bool(_draft_override),
+        "knowledge_graph_enabled": knowledge_resolver.enabled,
         "vision_enabled": VISION_ENABLED,
         "vision_provider": VISION_PROVIDER,
     }

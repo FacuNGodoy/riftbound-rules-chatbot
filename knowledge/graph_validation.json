@@ -1,0 +1,30 @@
+{
+  "valid": true,
+  "errors": [],
+  "warnings": [],
+  "stats": {
+    "nodes": 3218,
+    "edges": 3142,
+    "node_kinds": {
+      "card": 960,
+      "event": 6,
+      "mechanic": 19,
+      "property": 2,
+      "rule": 2231
+    },
+    "edge_types": {
+      "GOVERNED_BY": 64,
+      "LINKED_TO": 0,
+      "MODIFIES": 1,
+      "OCCURS_BEFORE": 5,
+      "PREVENTS": 1,
+      "READS_CURRENT_VALUE": 1,
+      "REPLACES": 1,
+      "REQUIRES": 3,
+      "RESOLVES_BEFORE": 0,
+      "TARGETS": 0,
+      "TRIGGERS_AFTER": 1,
+      "USES_MECHANIC": 3065
+    }
+  }
+}

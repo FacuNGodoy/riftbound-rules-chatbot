@@ -79,5 +79,38 @@
     "deterministic": true,
     "why": "Hidden Blade es 'Kill a unit. Its controller draws 2.' Instrucciones linked. Zhonya REEMPLAZA el kill (heal+exhaust+recall) pero el kill se consideró ejecutado: el draw no referencia el action ('If you do'), así que se resuelve (359.3.e.14.b). Flash/Retreat sacan la unidad ANTES de resolver → mistarget → no hay kill → no roba (359.3.e.14.a). Distinto de Deathgrip, que sí dice 'If you do'. OJO: este caso lo intercepta deterministic_ruling() y no llega al LLM, así que verifica que el atajo siga conectado, no el razonamiento del modelo.",
     "cards": ["OGN-213", "OGN-077", "OGS-011", "OGN-104"]
+  },
+  {
+    "id": 9,
+    "tags": ["graph", "deathgrip", "abandoned-hall", "play-trigger", "419.4"],
+    "question": "Mi rival controla Abandoned Hall y una unidad allí. Juega Deathgrip para matar esa unidad y darle su Might a otra unidad en la base. ¿La unidad que mata gana antes el +1 Might de Abandoned Hall?",
+    "expected": "no",
+    "expected_verdict": "NO",
+    "must_mention": ["419.4.a"],
+    "graph": true,
+    "why": "El trigger de Abandoned Hall ocurre cuando Deathgrip terminó de resolver (419.4.a). Para entonces Deathgrip ya mató la unidad y leyó su Might.",
+    "cards": ["SFD-163", "UNL-205"]
+  },
+  {
+    "id": 10,
+    "tags": ["graph", "defy", "abandoned-hall", "counter", "419.4"],
+    "question": "Estoy en Abandoned Hall. Mi rival counterea mi spell con Defy. ¿Abandoned Hall da +1 por el spell countereado? ¿Y por Defy?",
+    "expected": "por el spell countereado no; por defy si",
+    "expected_verdict": null,
+    "must_mention": ["419.4.a.1"],
+    "graph": true,
+    "why": "El spell countereado no completó su resolución y no dispara el campo (419.4.a.1). Defy sí resolvió, así que luego dispara Abandoned Hall.",
+    "cards": ["OGN-045", "UNL-205"]
+  },
+  {
+    "id": 11,
+    "tags": ["graph", "deathgrip", "zhonya", "replacement", "linked-instructions"],
+    "question": "Juego Deathgrip para matar una unidad amiga protegida por Zhonya's Hourglass. Si Zhonya reemplaza la muerte, ¿Deathgrip le da el Might a la otra unidad? ¿Robo la carta?",
+    "expected": "no da might; si roba",
+    "expected_verdict": "NO",
+    "must_mention": ["359.3.e.14"],
+    "graph": true,
+    "why": "Zhonya reemplaza el kill, por lo que el 'If you do' de Deathgrip falla y no da Might. Draw 1 es una instrucción independiente y sí ocurre.",
+    "cards": ["SFD-163", "OGN-077"]
   }
 ]

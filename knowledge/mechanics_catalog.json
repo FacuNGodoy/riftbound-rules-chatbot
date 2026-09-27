@@ -1,0 +1,222 @@
+[
+  {
+    "id": "play",
+    "title": "Play",
+    "patterns": ["\\bplay(?:ed|s|ing)?\\b", "\\bjugar?\\b", "\\bjuega\\b"],
+    "rule_ids": ["419.1", "419.4.a", "340.1"],
+    "facts": [
+      "Una carta jugada entra en la chain y se finaliza antes de resolverse.",
+      "Los efectos que comprueban que una carta fue jugada distinguen finalización de resolución."
+    ],
+    "relations": [
+      {"type": "OCCURS_BEFORE", "target": "event:card-resolved", "target_kind": "event", "label": "La carta se finaliza antes de resolverse", "rule_id": "419.1"}
+    ]
+  },
+  {
+    "id": "play-trigger",
+    "title": "Triggers al jugar",
+    "patterns": ["when (?:a player|you|an opponent) plays?", "cuando (?:un jugador|jugás|juegas|juega)"],
+    "rule_ids": ["419.4.a", "419.4.a.1", "383.3", "340.1"],
+    "facts": [
+      "Una habilidad que dispara cuando se juega una carta dispara después de que esa carta terminó de resolverse.",
+      "Si la carta fue countereada y no resolvió, ese trigger no ocurre."
+    ],
+    "relations": [
+      {"type": "TRIGGERS_AFTER", "target": "event:card-resolved", "target_kind": "event", "label": "El trigger de Play ocurre después de la resolución", "rule_id": "419.4.a"},
+      {"type": "REQUIRES", "target": "event:card-resolved", "target_kind": "event", "label": "La carta debe haber resuelto", "rule_id": "419.4.a.1"}
+    ]
+  },
+  {
+    "id": "triggered-ability",
+    "title": "Triggered abilities",
+    "patterns": ["\\bwhen\\b", "\\bat the (?:start|end)\\b", "\\bthe first time\\b", "\\bthe next time\\b"],
+    "rule_ids": ["383.1", "383.2.c", "383.3", "337.1"],
+    "facts": [
+      "Cumplir una condición agrega una habilidad como ítem de la chain; disparar no es resolver.",
+      "Los Pending Items se finalizan siguiendo el proceso de la chain."
+    ],
+    "relations": [
+      {"type": "OCCURS_BEFORE", "target": "event:ability-resolved", "target_kind": "event", "label": "La habilidad dispara y entra a la chain antes de resolverse", "rule_id": "383.3"}
+    ]
+  },
+  {
+    "id": "chain",
+    "title": "Chain y resolución",
+    "patterns": ["\\bchain\\b", "\\bbefore .* resolve", "\\bresolve[sd]?\\b"],
+    "rule_ids": ["337.1", "340.1", "303.1"],
+    "facts": [
+      "Los efectos se ejecutan completamente, uno por vez.",
+      "El ítem finalizado más nuevo de la chain se resuelve primero."
+    ],
+    "relations": [
+      {"type": "OCCURS_BEFORE", "target": "event:chain-resolution", "target_kind": "event", "label": "La finalización precede a la resolución", "rule_id": "337.1"}
+    ]
+  },
+  {
+    "id": "target",
+    "title": "Targets y elecciones",
+    "patterns": ["\\bchoose\\b", "\\banother (?:friendly|enemy)\\b", "\\ba (?:friendly|enemy) unit\\b", "\\bany number of\\b"],
+    "rule_ids": ["355.5", "355.7", "355.8", "355.10", "355.12", "355.15"],
+    "facts": [
+      "Elegir objetos específicos normalmente los convierte en targets.",
+      "Los targets se eligen al finalizar el spell o ability y no pueden cambiarse salvo instrucción expresa."
+    ],
+    "relations": [
+      {"type": "OCCURS_BEFORE", "target": "event:spell-resolution", "target_kind": "event", "label": "Los targets se eligen antes de resolver", "rule_id": "355.8"}
+    ]
+  },
+  {
+    "id": "kill",
+    "title": "Kill",
+    "patterns": ["\\bkill(?:ed|s|ing)?\\b", "\\bdie[sd]?\\b"],
+    "rule_ids": ["428.1", "428.2", "143.2.a"],
+    "facts": [
+      "Kill mueve un permanente del board al trash.",
+      "Una unidad muerta deja de estar en su ubicación anterior."
+    ],
+    "relations": [
+      {"type": "MODIFIES", "target": "property:board-location", "target_kind": "property", "label": "Kill mueve el permanente del board al trash", "rule_id": "428.1"}
+    ]
+  },
+  {
+    "id": "might",
+    "title": "Might actual",
+    "patterns": ["\\bmight\\b", "\\[might\\]"],
+    "rule_ids": ["143.2", "143.2.a", "137.3", "476.1"],
+    "facts": [
+      "Cuando un efecto dice Might sin decir printed Might, usa el valor actual en el momento de ejecutar esa instrucción.",
+      "Los modificadores activos forman parte del Might actual."
+    ],
+    "relations": [
+      {"type": "READS_CURRENT_VALUE", "target": "property:current-might", "target_kind": "property", "label": "Los efectos leen el Might actual", "rule_id": "143.2"}
+    ]
+  },
+  {
+    "id": "counter",
+    "title": "Counter",
+    "patterns": ["\\bcounter(?:ed|s|ing)?\\b"],
+    "rule_ids": ["425.1", "425.2", "419.4.a.1"],
+    "facts": [
+      "Counter impide que el ítem countereado se ejecute.",
+      "Un trigger que exige que la carta haya sido jugada no ocurre si esa carta no resolvió."
+    ],
+    "relations": [
+      {"type": "PREVENTS", "target": "event:card-resolved", "target_kind": "event", "label": "Counter impide la resolución", "rule_id": "425.1"}
+    ]
+  },
+  {
+    "id": "repeat",
+    "title": "Repeat",
+    "patterns": ["\\brepeat\\b"],
+    "rule_ids": ["820.1", "820.1.d"],
+    "facts": [
+      "Repeat ejecuta nuevamente instrucciones durante la resolución.",
+      "Si el spell no resuelve, Repeat no ejecuta sus instrucciones."
+    ],
+    "relations": [
+      {"type": "REQUIRES", "target": "event:spell-resolution", "target_kind": "event", "label": "Repeat requiere que el spell resuelva", "rule_id": "820.1.d"}
+    ]
+  },
+  {
+    "id": "replacement",
+    "title": "Replacement effects",
+    "patterns": ["\\binstead\\b", "\\bwould\\b"],
+    "rule_ids": ["368.1", "369.1", "438.1", "359.3.e.14"],
+    "facts": [
+      "Un replacement effect sustituye un evento; no es lo mismo que perder un target.",
+      "Las instrucciones vinculadas deben comprobar si la acción anterior ocurrió o fue reemplazada."
+    ],
+    "relations": [
+      {"type": "REPLACES", "target": "event:game-action", "target_kind": "event", "label": "El replacement effect sustituye una acción o evento", "rule_id": "369.1"}
+    ]
+  },
+  {
+    "id": "linked-instruction",
+    "title": "Instrucciones vinculadas",
+    "patterns": ["\\bif you do\\b", "\\bif they do\\b", "\\bits? controller\\b"],
+    "rule_ids": ["359.3.e.14", "359.3.e.14.a", "359.3.e.14.b", "359.3.e.14.c", "394.1"],
+    "facts": [
+      "If you do vincula la instrucción posterior al éxito de la acción anterior.",
+      "Una referencia posterior puede comportarse distinto frente a reemplazo y frente a una instrucción ignorada."
+    ],
+    "relations": [
+      {"type": "REQUIRES", "target": "event:prior-instruction-succeeded", "target_kind": "event", "label": "If you do requiere que la acción anterior se haya realizado y no haya sido reemplazada", "rule_id": "359.3.e.14.b"}
+    ]
+  },
+  {
+    "id": "reaction",
+    "title": "Reaction",
+    "patterns": ["\\breaction\\b"],
+    "rule_ids": ["813.1", "813.1.c", "331.1.a"],
+    "facts": [
+      "Reaction permite jugar durante estados cerrados y antes de que otros ítems resuelvan."
+    ]
+  },
+  {
+    "id": "action",
+    "title": "Action",
+    "patterns": ["\\baction\\b"],
+    "rule_ids": ["806.1", "806.2"],
+    "facts": [
+      "Action no habilita por sí sola responder dentro de una chain ya abierta."
+    ]
+  },
+  {
+    "id": "deal",
+    "title": "Deal damage",
+    "patterns": ["\\bdeal(?:s|t|ing)?\\b", "\\bdamage\\b"],
+    "rule_ids": ["417.1", "417.2", "143.2.a"],
+    "facts": [
+      "Deal marca daño; una unidad con daño no cero igual o mayor a su Might muere."
+    ]
+  },
+  {
+    "id": "draw",
+    "title": "Draw",
+    "patterns": ["\\bdraw\\b", "\\bdraws\\b"],
+    "rule_ids": ["413.1", "413.2"],
+    "facts": [
+      "Draw mueve la carta superior del deck a la mano como una acción."
+    ]
+  },
+  {
+    "id": "move",
+    "title": "Move",
+    "patterns": ["\\bmove(?:d|s|ing)?\\b"],
+    "rule_ids": ["420.1", "446.1", "355.4"],
+    "facts": [
+      "La ubicación destino se elige al finalizar el efecto que mueve.",
+      "Mover no equivale a jugar una carta."
+    ]
+  },
+  {
+    "id": "attach",
+    "title": "Attach y Equipment",
+    "patterns": ["\\battach(?:ed|es|ing)?\\b", "\\bequip(?:ment)?\\b", "\\bgear\\b"],
+    "rule_ids": ["434.1", "717", "718.4", "137.3", "818.1"],
+    "facts": [
+      "El Might Bonus de una carta attached modifica el Might de la carta superior mientras siga attached."
+    ]
+  },
+  {
+    "id": "printed-cost",
+    "title": "Coste impreso",
+    "patterns": ["\\bcosts?\\b", "\\benergy cost\\b", "\\bcoste\\b"],
+    "rule_ids": ["206", "204.1"],
+    "facts": [
+      "Cuando un efecto necesita determinar el coste de una carta usa el coste impreso o copiado, aunque al jugar se haya modificado."
+    ]
+  },
+  {
+    "id": "additional-cost",
+    "title": "Costes adicionales",
+    "patterns": ["\\badditional cost\\b", "\\bas an additional cost\\b"],
+    "rule_ids": ["354.1", "354.2", "820.1"],
+    "facts": [
+      "Los costes adicionales se eligen y pagan durante el proceso de finalizar la carta, antes de su resolución."
+    ],
+    "relations": [
+      {"type": "OCCURS_BEFORE", "target": "event:spell-resolution", "target_kind": "event", "label": "El coste adicional se paga antes de resolver", "rule_id": "354.2"}
+    ]
+  }
+]

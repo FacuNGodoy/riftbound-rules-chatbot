@@ -18,3 +18,10 @@ extract.py
 to_markdown.py
 start_*.bat
 PUBLICAR.md
+knowledge/cards
+knowledge/rules
+knowledge/mechanics
+knowledge/README.md
+knowledge/mechanics_catalog.json
+knowledge/schema.json
+knowledge/graph_validation.json
