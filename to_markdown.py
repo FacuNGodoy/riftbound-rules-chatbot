@@ -69,6 +69,8 @@ CORE_SUBSECTIONS = {
     "820": "Repeat", "821": "Weaponmaster", "822": "Ambush",
     "823": "Hunt", "824": "Level", "825": "Unique",
     "826": "Backline", "827": "Empower", "828": "Empowered", "829": "Flow",
+    "830": "Deploy", "831": "Disarm", "832": "Show Off",
+    "446": "Copy",
 }
 
 # === Secciones del Tournament Rules ===
@@ -214,8 +216,8 @@ def main():
 
     # 1. Core Rules PDF
     print("Convirtiendo Core Rules...")
-    raw = (RAW_DIR / "Riftbound Core Rules RUP4.txt").read_text(encoding="utf-8")
-    md = pdf_to_markdown(raw, CORE_SECTIONS, CORE_SUBSECTIONS, "Riftbound Core Rules RUP4")
+    raw = (RAW_DIR / "Riftbound Core Rules RUP5.txt").read_text(encoding="utf-8")
+    md = pdf_to_markdown(raw, CORE_SECTIONS, CORE_SUBSECTIONS, "Riftbound Core Rules RUP5")
     (MD_DIR / "core_rules.md").write_text(md, encoding="utf-8")
     print(f"  -> core_rules.md ({len(md):,} chars)")
 

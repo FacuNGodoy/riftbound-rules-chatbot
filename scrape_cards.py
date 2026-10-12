@@ -11,14 +11,14 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright, TimeoutError as PWTimeout
 
 OUTPUT_FILE = Path(__file__).resolve().parent / "cards.json"
-BASE_URL = "https://piltoverarchive.com/cards?variants=standard&sortBy=color%3Aasc"
-TOTAL_PAGES = 21
+BASE_URL = "https://piltoverarchive.com/cards?sets=RAD"
+TOTAL_PAGES = 6
 
 DOMAIN_NAMES = {"Body", "Calm", "Fury", "Mind", "Chaos", "Order"}
 TYPE_NAMES = {"Champion Unit", "Signature Spell", "Legend", "Unit", "Spell", "Gear", "Rune", "Battlefield"}
 RARITY_NAMES = {"Legend", "Epic", "Rare", "Uncommon", "Common", "Token"}
 
-SETS = {"OGS": 24, "OGN": 298, "SFD": 221, "UNL": 219, "VEN": 166}
+SETS = {"OGS": 24, "OGN": 298, "SFD": 221, "UNL": 219, "VEN": 166, "RAD": 214}
 
 SECTION_LABELS = {"description", "effect", "might"}
 
@@ -164,7 +164,7 @@ def main():
         page = context.new_page()
 
         # Navegar primero para cerrar cookie banner
-        page.goto(BASE_URL, wait_until="networkidle", timeout=30000)
+        page.goto(BASE_URL, wait_until="load", timeout=45000)
         time.sleep(2)
 
         # Cerrar cookie banner si aparece
@@ -257,7 +257,7 @@ def main():
             if card_id not in scraped_nums:
                 missing.append(card_id)
         if missing:
-            print(f"  {set_code}: {len(missing)} faltantes → {', '.join(missing)}")
+            print(f"  {set_code}: {len(missing)} faltantes -> {', '.join(missing)}")
             total_missing += len(missing)
         else:
             print(f"  {set_code}: completo ({count}/{count})")

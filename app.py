@@ -54,7 +54,7 @@ VISION_PROVIDER = _vision_provider
 VISION_ENABLED = VISION_PROVIDER != "none"
 if VISION_PROVIDER == "ollama":
     import ollama
-GEMINI_MODEL = "gemini-3.7-flash"
+GEMINI_MODEL = "gemini-3.8-flash"
 # Cada modelo tiene su propia cuota diaria (RPD). Si se agota uno, se pasa al siguiente.
 # El draft necesita el razonamiento más fuerte: Flash primero (20 RPD cada uno),
 # con un Lite al final como red de seguridad (500 RPD).
