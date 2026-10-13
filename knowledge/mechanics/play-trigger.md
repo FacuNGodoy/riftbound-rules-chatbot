@@ -17,12 +17,12 @@ confidence: "curated"
 
 ## Reglas
 
-- [[rules/419 Play|Regla 419.4.a]]
-- [[rules/419 Play|Regla 419.4.a.1]]
+- Regla `419.4.a` (no encontrada)
+- Regla `419.4.a.1` (no encontrada)
 - [[rules/382 Triggered Abilities|Regla 383.3]]
 - [[rules/340 Step 4 - Resolve|Regla 340.1]]
 
-## Cartas (178)
+## Cartas (229)
 
 - [[cards/OGN-003|Chemtech Enforcer (OGN-003)]]
 - [[cards/OGN-016|Dangerous Duo (OGN-016)]]
@@ -81,27 +81,27 @@ confidence: "curated"
 - [[cards/OGS-010|Annie, Stubborn (OGS-010)]]
 - [[cards/OGS-018|Tibbers (OGS-018)]]
 - [[cards/OGS-021|Lux, Lady of Luminosity (OGS-021)]]
-- [[cards/SFD-002|Armed Assailant (SFD-002)]]
-- [[cards/SFD-007|Gem Jammer (SFD-007)]]
-- [[cards/SFD-008|Sentinel Adept (SFD-008)]]
-- [[cards/SFD-013|Blast Corps Cadet (SFD-013)]]
-- [[cards/SFD-022|Long Sword (SFD-022)]]
-- [[cards/SFD-032|Disarming Rake (SFD-032)]]
-- [[cards/SFD-039|Royal Entourage (SFD-039)]]
-- [[cards/SFD-046|Poro Snax (SFD-046)]]
-- [[cards/SFD-053|Janna, Savior (SFD-053)]]
-- [[cards/SFD-054|Jax, Unmatched (SFD-054)]]
-- [[cards/SFD-056|Sterak's Gage (SFD-056)]]
-- [[cards/SFD-058|Ornn, Blacksmith (SFD-058)]]
-- [[cards/SFD-061|Aspiring Engineer (SFD-061)]]
-- [[cards/SFD-062|Bubble Bot (SFD-062)]]
-- [[cards/SFD-063|Chemtech Cask (SFD-063)]]
-- [[cards/SFD-064|Cloth Armor (SFD-064)]]
-- [[cards/SFD-065|Forecaster (SFD-065)]]
-- [[cards/SFD-067|Frostcoat Cub (SFD-067)]]
-- [[cards/SFD-072|Dropboarder (SFD-072)]]
-- [[cards/SFD-074|Pickpocket (SFD-074)]]
-- [[cards/SFD-079|Bard, Mercurial (SFD-079)]]
-- [[cards/SFD-081|Card Sharp (SFD-081)]]
-- [[cards/SFD-084|Jayce, Man of Progress (SFD-084)]]
-- …y 98 cartas más en el grafo exportado.
+- [[cards/RAD-001|Amateur Demolitionist (RAD-001)]]
+- [[cards/RAD-003|Bilgewater Tracker (RAD-003)]]
+- [[cards/RAD-008|War Scout (RAD-008)]]
+- [[cards/RAD-009|Antagonistic Apparatus (RAD-009)]]
+- [[cards/RAD-010|Forbidden Technique (RAD-010)]]
+- [[cards/RAD-012|Runeblade Anvil (RAD-012)]]
+- [[cards/RAD-014|Shimmering Swimmer (RAD-014)]]
+- [[cards/RAD-017|Detonation Amplifier (RAD-017)]]
+- [[cards/RAD-018|Drakehound Packmaster (RAD-018)]]
+- [[cards/RAD-019|Firebrand Raider (RAD-019)]]
+- [[cards/RAD-023|Ziggs, Short-Fused (RAD-023)]]
+- [[cards/RAD-030|Sanctum Conservator (RAD-030)]]
+- [[cards/RAD-031|Stoic Ferryman (RAD-031)]]
+- [[cards/RAD-035|Invigorating Bloom (RAD-035)]]
+- [[cards/RAD-039|Ephemeral Ward (RAD-039)]]
+- [[cards/RAD-040|Heartening Soul (RAD-040)]]
+- [[cards/RAD-049|Industrious Mechsmith (RAD-049)]]
+- [[cards/RAD-050|Mysterious Chronomancer (RAD-050)]]
+- [[cards/RAD-057|Piltovan Guidebot (RAD-057)]]
+- [[cards/RAD-058|Riptide Mage (RAD-058)]]
+- [[cards/RAD-060|The Empyrean (RAD-060)]]
+- [[cards/RAD-067|Clocktower Guardian (RAD-067)]]
+- [[cards/RAD-069|Zero Point Inflection (RAD-069)]]
+- …y 149 cartas más en el grafo exportado.

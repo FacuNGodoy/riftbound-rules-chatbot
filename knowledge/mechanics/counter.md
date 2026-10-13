@@ -19,12 +19,13 @@ confidence: "curated"
 
 - [[rules/425 Counter|Regla 425.1]]
 - [[rules/425 Counter|Regla 425.2]]
-- [[rules/419 Play|Regla 419.4.a.1]]
+- Regla `419.4.a.1` (no encontrada)
 
-## Cartas (14)
+## Cartas (15)
 
 - [[cards/OGN-045|Defy (OGN-045)]]
 - [[cards/OGN-064|Wind Wall (OGN-064)]]
+- [[cards/RAD-041|Hush (RAD-041)]]
 - [[cards/SFD-045|Not So Fast (SFD-045)]]
 - [[cards/SFD-136|Hard Bargain (SFD-136)]]
 - [[cards/SFD-194|Counter Strike (SFD-194)]]

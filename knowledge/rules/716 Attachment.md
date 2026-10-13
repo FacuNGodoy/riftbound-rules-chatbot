@@ -4,7 +4,7 @@ id: "rule-section:716"
 kind: "rule-section"
 tags: ["riftbound", "knowledge/rule"]
 source: "docs/core_rules.md"
-source_hash: "e2fc96c42c9e65044e0b5e34b3badbe33f4fa24eb828c3243f184069cbf85081"
+source_hash: "a2307a5cd09cfa2252ea846f29a4ceab1adbc9d4b600b4fe96aa33f91ce68613"
 generated: true
 confidence: "official"
 ---
@@ -16,7 +16,8 @@ confidence: "official"
 
 **717.** Attaching is a limited action that causes cards to become linked to each other to combine their effects in
 some way. This causes one card to become Attached and the other to become A Top-Most Card.
-See rule 434. Attach for more information.
+See rule 435. Attach for more information.
+
 **718.** Attached is the state of a card being linked to another card in this way.
 
 **718.1.** A card remains in this state until Detached.
@@ -24,11 +25,10 @@ See rule 434. Attach for more information.
 **718.2.** While in this state, the card’s printed Rules Text is Inactive.
 See rule 720. Inactive for more information.
 
-**718.3.** While in this state, Abilities in the card’s Effect Text are appended to the Rules Text of the Top-Most
-Card.
+**718.3.** While in this state, Abilities in the card’s Effect Text are appended to the Rules Text of the Top-
+Most Card.
 
 **718.4.** While in this state, the card’s Might Bonus modulates the Top-Most Card’s Might by the value listed.
-
 **718.5.** Attached cards still have all properties of being a card on the board while in this state.
 
 **718.5.a.** Attached cards still have all Types and Tags while Attached.
@@ -42,11 +42,16 @@ to.
 
 **718.5.e.** Attached cards may have different Controllers from their Top-Most card.
 
-**718.5.f.** Changes in Control of the Top-Most card do not impact Control of Attached cards and vice
-versa.
+**718.5.f.** Changes in Control of the Top-Most card do not impact Control of Attached cards and
+vice versa.
 
-**718.5.g.** An Attached card still appends the abilities in its Effect Text to the Rules Text of the
-Top-Most card and modulates the Top-Most Card’s Might by its Might Bonus.
+**718.5.g.** An Attached card still appends the abilities in its Effect Text to the Rules Text of the Top-
+Most card and modulates the Top-Most Card’s Might by its Might Bonus.
+
+**718.6.** Only non-Unit Game Objects may be Attached.
+
+**718.6.a.** If a non-Unit Game Object that is Attached becomes a Unit through any means, it
+detaches as it becomes a Unit.
 
 **719.** A Top-Most Card is a card that has one or more cards linked to it through the process of Attaching.
 

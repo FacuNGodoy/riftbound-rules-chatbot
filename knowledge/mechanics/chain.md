@@ -21,7 +21,7 @@ confidence: "curated"
 - [[rules/340 Step 4 - Resolve|Regla 340.1]]
 - [[rules/301 The Turn|Regla 303.1]]
 
-## Cartas (66)
+## Cartas (76)
 
 - [[cards/OGN-033|Shakedown (OGN-033)]]
 - [[cards/OGN-045|Defy (OGN-045)]]
@@ -45,6 +45,15 @@ confidence: "curated"
 - [[cards/OGN-266|Siphon Power (OGN-266)]]
 - [[cards/OGS-011|Flash (OGS-011)]]
 - [[cards/OGS-020|Highlander (OGS-020)]]
+- [[cards/RAD-025|Consult the Heavens (RAD-025)]]
+- [[cards/RAD-029|Life from Stone (RAD-029)]]
+- [[cards/RAD-034|Hunker Down (RAD-034)]]
+- [[cards/RAD-041|Hush (RAD-041)]]
+- [[cards/RAD-048|High Note (RAD-048)]]
+- [[cards/RAD-063|Kai'Sa, Rebel (RAD-063)]]
+- [[cards/RAD-098|Siren's Song (RAD-098)]]
+- [[cards/RAD-117|For Demacia! (RAD-117)]]
+- [[cards/RAD-154|Last Caress (RAD-154)]]
 - [[cards/SFD-001|Against the Odds (SFD-001)]]
 - [[cards/SFD-011|Angle Shot (SFD-011)]]
 - [[cards/SFD-025|Rengar, Pouncing (SFD-025)]]
@@ -80,6 +89,7 @@ confidence: "curated"
 - [[cards/UNL-175|Tactical Retreat (UNL-175)]]
 - [[cards/UNL-184|Thrill of the Hunt (UNL-184)]]
 - [[cards/UNL-190|Lilting Lullaby (UNL-190)]]
+- [[cards/UNNUMBERED-radiance-kai-sa-rebel-champion-unit|Kai'Sa, Rebel (UNNUMBERED-radiance-kai-sa-rebel-champion-unit)]]
 - [[cards/VEN-034|Resonating Strike (VEN-034)]]
 - [[cards/VEN-035|Sanction (VEN-035)]]
 - [[cards/VEN-039|Crumbling Sands (VEN-039)]]

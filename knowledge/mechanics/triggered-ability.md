@@ -22,7 +22,7 @@ confidence: "curated"
 - [[rules/382 Triggered Abilities|Regla 383.3]]
 - [[rules/337 Step 1 - Finalize|Regla 337.1]]
 
-## Cartas (453)
+## Cartas (559)
 
 - [[cards/OGN-003|Chemtech Enforcer (OGN-003)]]
 - [[cards/OGN-006|Flame Chompers (OGN-006)]]
@@ -104,4 +104,4 @@ confidence: "curated"
 - [[cards/OGN-186|Treasure Trove (OGN-186)]]
 - [[cards/OGN-188|Zaunite Bouncer (OGN-188)]]
 - [[cards/OGN-190|Kog'Maw, Caustic (OGN-190)]]
-- …y 373 cartas más en el grafo exportado.
+- …y 479 cartas más en el grafo exportado.

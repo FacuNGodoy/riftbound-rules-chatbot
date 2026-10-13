@@ -4,7 +4,7 @@ id: "rule-section:806"
 kind: "rule-section"
 tags: ["riftbound", "knowledge/rule"]
 source: "docs/core_rules.md"
-source_hash: "43a94f2e1e0bfd7f79c93123d733d87e521544f57592694c39e29e42fcd15eb6"
+source_hash: "32d933cc188bd5f580911483bae829ee37b6eff93fdc4d3beffa097886e1150b"
 generated: true
 confidence: "official"
 ---
@@ -22,6 +22,7 @@ confidence: "official"
 Showdowns, even when it is not the Controlling player's turn.
 
 **806.1.c.** Action is functionally short for the following:
+
 **806.1.c.1.** On Cards: "This can be played during showdowns on any player's turn."
 
 **806.1.c.2.** On Activated Abilities: "This can be activated during showdowns on any player's
@@ -50,7 +51,6 @@ reached, the actions taken while playing it are undone and it is returned to the
 played from if it is a card.
 
 **806.5.** Action is a referenceable characteristic.
-
 **806.5.a.** Whether or not a Game Object has Action is a characteristic of that Game Object and may
 be checked or referenced by other Game Effects.
 

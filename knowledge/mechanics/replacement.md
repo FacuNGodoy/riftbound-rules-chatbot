@@ -22,7 +22,7 @@ confidence: "curated"
 - [[rules/438 Replace|Regla 438.1]]
 - [[rules/353 The Process of Play|Regla 359.3.e.14]]
 
-## Cartas (40)
+## Cartas (46)
 
 - [[cards/OGN-023|Unlicensed Armory (OGN-023)]]
 - [[cards/OGN-077|Zhonya's Hourglass (OGN-077)]]
@@ -32,6 +32,12 @@ confidence: "curated"
 - [[cards/OGN-263|Teemo, Swift Scout (OGN-263)]]
 - [[cards/OGN-269|Sett, The Boss (OGN-269)]]
 - [[cards/OGS-020|Highlander (OGS-020)]]
+- [[cards/RAD-020|Mordekaiser, Twice Slain (RAD-020)]]
+- [[cards/RAD-027|Iridescent Avian (RAD-027)]]
+- [[cards/RAD-092|Seraphic Wyvern (RAD-092)]]
+- [[cards/RAD-100|The Waters' Wage (RAD-100)]]
+- [[cards/RAD-127|Rousing Display (RAD-127)]]
+- [[cards/RAD-132|Heimerdinger, Academy Instructor (RAD-132)]]
 - [[cards/SFD-017|Sudden Storm (SFD-017)]]
 - [[cards/SFD-018|Void Hatchling (SFD-018)]]
 - [[cards/SFD-051|Guardian Angel (SFD-051)]]

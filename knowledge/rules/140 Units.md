@@ -4,7 +4,7 @@ id: "rule-section:140"
 kind: "rule-section"
 tags: ["riftbound", "knowledge/rule"]
 source: "docs/core_rules.md"
-source_hash: "1ecd940def7e6b03ea188c21dfd36fdf482a1fa7fb22b74be6322961c1740895"
+source_hash: "e8a3aa598468f0893a3e443d45dc7c65ec32b128c8c1ae483ea5341f6e6ef7c3"
 generated: true
 confidence: "official"
 ---
@@ -29,7 +29,7 @@ Base.
 that specify Units.
 
 **141.1.a.4.** Units can be Killed.
-See rule 428. Kill for more information.
+See rule 429. Kill for more information.
 
 **141.1.b.** While in the Trash:
 
@@ -40,7 +40,6 @@ cannot take actions or be affected by spells, abilities, or game actions that ta
 Units on the Board.
 
 **141.1.b.3.** Units can be affected by spells and game effects that target Units in the Trash.
-
 **141.2.** A Card Type
 
 **141.2.a.** This is a unique identifier that some spells or abilities will use to restrict what they can
@@ -65,7 +64,7 @@ Example: A unit reads in part “Your damage can’t be prevented.” This refer
 damage marked by that player.
 
 **142.4.** Damage tracks how close a Unit is to being Killed.
-See rule 428. Kill for more information.
+See rule 429. Kill for more information.
 
 **142.4.a.** Lethal Damage is the amount of marked Damage that will cause a unit to die in a cleanup.
 
@@ -84,7 +83,7 @@ enough to kill enemy units.” This alters the Lethal Damage value for enemy uni
 that have damage marked by you.
 
 **142.5.** Damage can be Healed.
-See rule 418. Heal for more information.
+See rule 419. Heal for more information.
 
 **143.** Units have multiple Intrinsic Properties unique to them:
 
@@ -94,17 +93,31 @@ it belongs to.
 **143.1.a.** These have no intrinsic rules or behaviors by themselves.
 
 **143.1.b.** Spells, abilities, and game actions can reference these types as part of their execution.
-
 **143.2.** Might: The combat statistic of a Unit. Used to determine a Unit's contribution to Combat, as well as
 when it is Killed by damaging effects.
 
-**143.2.a.** If a Unit ever has nonzero damage marked on it equalling or exceeding its Might, it is Killed.
+**143.2.a.** A Unit’s Might can be referenced by cards and effects in one of three forms: A Unit has a
+Printed Might, that is the value in the top right corner of the unit card/token; a Base Might,
+that is a trait that is alterable by effects in the Trait-Altering layer; and an Effective Might,
+that is the value calculated in the arithmetic layer including all Might altering Game Effects.
+See rule 475. Layers for more information.
 
-**143.2.b.** If a unit's Might is ever less than 0, it is treated as 0 when referenced by spells and abilities,
+**143.2.a.1.** Card text may refer to the latter two of these three forms. When cards or these
+rules refer to a Unit’s Effective Might, they will do so by simply referring to that
+unit’s “Might.”
+Example: A card reads in part “Choose a unit. Its base Might becomes 5
+this turn.” This applies an effect in the trait-altering layer.
+
+Example: A card reads in part “Choose a unit. Increase its Might to 5 this
+turn.” This applies an effect in the arithmetic layer.
+
+**143.2.b.** If a Unit ever has nonzero damage marked on it equalling or exceeding its Might, it is Killed.
+
+**143.2.c.** If a unit's Might is ever less than 0, it is treated as 0 when referenced by spells and abilities,
 and when summing Might to be assigned as damage in the Combat Damage Step.
-See rule 465. The Combat Damage Step for more information.
+See rule 467. The Combat Damage Step for more information.
 
-**143.2.b.1.** Although the unit’s Might is treated as 0, it is not 0. Effects that calculate Might
+**143.2.c.1.** Although the unit’s Might is treated as 0, it is not 0. Effects that calculate Might
 increases and decreases use the actual value of the unit’s Might.
 
 **143.3.** Units can have damage marked on them.
@@ -118,14 +131,23 @@ temporarily. This can be tracked with coins, dice, or other markers, or by memor
 See rule 317.2. Ending Phase for more information.
 
 **143.3.b.2.** During a Combat Cleanup.
-See rule 466.1. for more information about Combat Cleanups.
+See rule 468.1. for more information about Combat Cleanups.
 
 **143.4.** Units enter the Board exhausted.
+
 **143.4.a.** This can be altered by Accelerate or similar game effects.
 See rule 805. Accelerate for more information.
 
-**144.** Units have the Inherent Ability to perform a Standard Move.
+**143.5.** Units cannot be Attached to other permanents.
+See rule 435. Attach for more information on the attach game action.
+See rule 716. Attachment for more information on attachment.
 
+**143.5.a.** If a Unit would be Attached to a permanent, nothing happens.
+
+**143.5.b.** If a non-Unit Game Object that is Attached becomes a Unit through any means, it
+detaches as it becomes a Unit.
+
+**144.** Units have the Inherent Ability to perform a Standard Move.
 **144.1.** This action is limited in when it can be performed.
 
 **144.1.a.** This action can be done any time during a player's Main Phase.
@@ -151,7 +173,7 @@ action performed on multiple Units.
 
 **144.4.a.1.** Units cannot Move to a Battlefield that already has units from 2 other players
 present, or where a Combat is ongoing that has 2 other players as participants.
-See rule 447.2. For more information on valid destinations for movement.
+See rule 449.2. For more information on valid destinations for movement.
 
 **144.4.b.** Units may move from a Battlefield to their Base.
 

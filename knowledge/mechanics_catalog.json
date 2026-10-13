@@ -3,27 +3,27 @@
     "id": "play",
     "title": "Play",
     "patterns": ["\\bplay(?:ed|s|ing)?\\b", "\\bjugar?\\b", "\\bjuega\\b"],
-    "rule_ids": ["419.1", "419.4.a", "340.1"],
+    "rule_ids": ["420.1", "420.4.a", "340.1"],
     "facts": [
       "Una carta jugada entra en la chain y se finaliza antes de resolverse.",
       "Los efectos que comprueban que una carta fue jugada distinguen finalización de resolución."
     ],
     "relations": [
-      {"type": "OCCURS_BEFORE", "target": "event:card-resolved", "target_kind": "event", "label": "La carta se finaliza antes de resolverse", "rule_id": "419.1"}
+      {"type": "OCCURS_BEFORE", "target": "event:card-resolved", "target_kind": "event", "label": "La carta se finaliza antes de resolverse", "rule_id": "420.1"}
     ]
   },
   {
     "id": "play-trigger",
     "title": "Triggers al jugar",
     "patterns": ["when (?:a player|you|an opponent) plays?", "cuando (?:un jugador|jugás|juegas|juega)"],
-    "rule_ids": ["419.4.a", "419.4.a.1", "383.3", "340.1"],
+    "rule_ids": ["420.4.a", "420.4.a.1", "383.3", "340.1"],
     "facts": [
       "Una habilidad que dispara cuando se juega una carta dispara después de que esa carta terminó de resolverse.",
       "Si la carta fue countereada y no resolvió, ese trigger no ocurre."
     ],
     "relations": [
-      {"type": "TRIGGERS_AFTER", "target": "event:card-resolved", "target_kind": "event", "label": "El trigger de Play ocurre después de la resolución", "rule_id": "419.4.a"},
-      {"type": "REQUIRES", "target": "event:card-resolved", "target_kind": "event", "label": "La carta debe haber resuelto", "rule_id": "419.4.a.1"}
+      {"type": "TRIGGERS_AFTER", "target": "event:card-resolved", "target_kind": "event", "label": "El trigger de Play ocurre después de la resolución", "rule_id": "420.4.a"},
+      {"type": "REQUIRES", "target": "event:card-resolved", "target_kind": "event", "label": "La carta debe haber resuelto", "rule_id": "420.4.a.1"}
     ]
   },
   {
@@ -82,7 +82,7 @@
     "id": "might",
     "title": "Might actual",
     "patterns": ["\\bmight\\b", "\\[might\\]"],
-    "rule_ids": ["143.2", "143.2.a", "137.3", "476.1"],
+    "rule_ids": ["143.2", "143.2.a", "137.3", "476"],
     "facts": [
       "Cuando un efecto dice Might sin decir printed Might, usa el valor actual en el momento de ejecutar esa instrucción.",
       "Los modificadores activos forman parte del Might actual."
@@ -95,7 +95,7 @@
     "id": "counter",
     "title": "Counter",
     "patterns": ["\\bcounter(?:ed|s|ing)?\\b"],
-    "rule_ids": ["425.1", "425.2", "419.4.a.1"],
+    "rule_ids": ["425.1", "425.2", "420.4.a.1"],
     "facts": [
       "Counter impide que el ítem countereado se ejecute.",
       "Un trigger que exige que la carta haya sido jugada no ocurre si esa carta no resolvió."
@@ -134,13 +134,13 @@
     "id": "linked-instruction",
     "title": "Instrucciones vinculadas",
     "patterns": ["\\bif you do\\b", "\\bif they do\\b", "\\bits? controller\\b"],
-    "rule_ids": ["359.3.e.14", "359.3.e.14.a", "359.3.e.14.b", "359.3.e.14.c", "394.1"],
+    "rule_ids": ["359.3.e.14", "394"],
     "facts": [
       "If you do vincula la instrucción posterior al éxito de la acción anterior.",
       "Una referencia posterior puede comportarse distinto frente a reemplazo y frente a una instrucción ignorada."
     ],
     "relations": [
-      {"type": "REQUIRES", "target": "event:prior-instruction-succeeded", "target_kind": "event", "label": "If you do requiere que la acción anterior se haya realizado y no haya sido reemplazada", "rule_id": "359.3.e.14.b"}
+      {"type": "REQUIRES", "target": "event:prior-instruction-succeeded", "target_kind": "event", "label": "If you do requiere que la acción anterior se haya realizado y no haya sido reemplazada", "rule_id": "359.3.e.14"}
     ]
   },
   {
@@ -174,7 +174,7 @@
     "id": "draw",
     "title": "Draw",
     "patterns": ["\\bdraw\\b", "\\bdraws\\b"],
-    "rule_ids": ["413.1", "413.2"],
+    "rule_ids": ["414.1", "414.2"],
     "facts": [
       "Draw mueve la carta superior del deck a la mano como una acción."
     ]
@@ -183,7 +183,7 @@
     "id": "move",
     "title": "Move",
     "patterns": ["\\bmove(?:d|s|ing)?\\b"],
-    "rule_ids": ["420.1", "446.1", "355.4"],
+    "rule_ids": ["448.1", "449.1", "355.4"],
     "facts": [
       "La ubicación destino se elige al finalizar el efecto que mueve.",
       "Mover no equivale a jugar una carta."

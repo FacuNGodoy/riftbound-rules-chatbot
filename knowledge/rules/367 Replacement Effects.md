@@ -4,7 +4,7 @@ id: "rule-section:367"
 kind: "rule-section"
 tags: ["riftbound", "knowledge/rule"]
 source: "docs/core_rules.md"
-source_hash: "aa7eb9d99897d5b61cc474e64751a8a0460ed8919ef201c67f23f2faf20fe622"
+source_hash: "f874ec0941098cb4e7f9e296b1f9a5d9dd86361476f58ccb66d7f3704f2173c6"
 generated: true
 confidence: "official"
 ---
@@ -31,20 +31,19 @@ This is a replacement effect that alters the execution of any Game Effect that r
 Undertitan from your deck.
 
 **369.2.** Some Game Actions are themselves Replacement Effects.
-Example: Burning Out is a replacement effect.​
+Example: Burning Out is a replacement effect.
 Example: Preventing Damage is a replacement effect.
 
 **369.3.** Replacement Effects that apply to a unit as it enters the Board can be identified by describing how
 the unit enters, or by describing a game action that occurs “as” a unit enters.
-Example: Master Yi, Honed reads “I enter ready.” This applies a replacement effect to the way
-that units normally enter. The event of him entering exhausted is replaced by one where he
-enters ready.
+Example: Master Yi, Honed reads “I enter ready.” This applies a replacement effect to the
+way that units normally enter. The event of him entering exhausted is replaced by one
+where he enters ready.
 
 Example: Baron Nashor reads “As you play me, add the Baron Pit battlefield token to the
 board if it's not there already. If you do, I enter there.” The last sentence of his ability is a
 replacement effect that replaces the event of him entering at his original play location with
 him entering at the Baron Pit if it was created.
-
 **370.** A Replacement Effect can alter the typical flow of play, including other cards' executions.
 
 **370.1.** Replacement Effects apply to any event or instruction that qualifies for their application. A
@@ -67,13 +66,13 @@ replaced by Zhonya’s Hourglass is the same as the kill action that caused
 that death not occurring.
 
 Example: A card reads in part “The next time an enemy unit would
-become Mighty this turn, banish it instead. Its controller plays a 3 [M] Mech
-unit token to its location.” A unit becoming Mighty being replaced by this
-effect means the unit never became Mighty—no effects that trigger on
-units becoming Mighty will trigger.
+become Mighty this turn, banish it instead. Its controller plays a 3 [M]
+Mech unit token to its location.” A unit becoming Mighty being replaced
+by this effect means the unit never became Mighty—no effects that
+trigger on units becoming Mighty will trigger.
 
-**370.1.a.2.** An event can occur simultaneously with other events only when those events are all
-the result of the same Game Action or change in state occurring.
+**370.1.a.2.** An event can occur simultaneously with other events only when those events are
+all the result of the same Game Action or change in state occurring.
 Example: A spell reads in part “Kill up to two units at battlefields.” When
 that spell resolves, the units targeted are killed simultaneously because
 their deaths result from the same game action.
@@ -96,6 +95,29 @@ replaced by Undertitan being revealed from your deck and adding [2]
 Energy to your Rune Pool.
 
 **370.1.c.** Replacement Effects are applied before any qualifying event has actually occurred.
+
+**370.1.c.1.** If the Replacement Effect of a Game Object applies to an event that involves that
+same Game Object while it is in a secret zone, it applies to and replaces such an
+event simultaneously with that event occurring instead. The replacing event still
+occurs in the order specified by the instruction that generated it, and the original
+event does not occur if it is replaced.
+Example: Nocturne, Horrifying reads in part “As you look at or reveal me
+from the top of your deck, you may banish me. If you do, you may play me
+for [A].” Because Nocturne’s replacement effect replaces an event that
+applies while he is in a secret zone, it applies to the event of him being
+looked at or revealed from the top of a player’s Main Deck simultaneously
+with that event occurring.
+
+Example: A card reads in part “If you would burn this, you may burn this
+and an additional card instead.” Because the replacement effect applies
+to the card while it is in a secret zone, it applies simultaneously with the
+event occurring. Another card reads “If a player would put a card into their
+trash from their Main Deck, banish it instead.” This replacement effect is
+active on the board, and thus applies before the qualifying event occurs.
+Because these replacement effects are applied at different timings, they
+are applied in order. The card will be banished first, and subsequently its
+replacement effect will have nothing to replace.
+
 **370.2.** A Replacement Effect can only be applied once to an event, or to any Game Actions or events that
 replace that event.
 Example: A player plays a spell that reads “gear you control become 1 [M] gear units this
@@ -116,10 +138,10 @@ so it will not be able to replace its death.
 
 **370.4.** A Game Object can apply its Replacement Effects to any qualifying events that occur
 simultaneously with it leaving the zone that its Replacement Effect is active in.
-Example: Soraka, Wanderer has a Replacement Effect that reads, “If another unit you control
-here would die, if it has less Might than me, instead heal it, exhaust it, and recall it.” Soraka’s
-replacement can be applied to any qualifying event that occurs simultaneously with her
-leaving the board, including to units that die simultaneously with her.
+Example: Soraka, Wanderer has a Replacement Effect that reads, “If another unit you
+control here would die, if it has less Might than me, instead heal it, exhaust it, and recall it.”
+Soraka’s replacement can be applied to any qualifying event that occurs simultaneously
+with her leaving the board, including to units that die simultaneously with her.
 
 **371.** Some Replacement Effects will begin with “once each turn,” or “N times each turn.”
 
@@ -141,21 +163,21 @@ event of a token being played.
 
 **372.** If more than one Replacement Effect applies to the same event being executed, then the controller of the
 object being acted on determines the order the Replacement Effects will apply.
-
 **372.1.** If it is a player being acted on, that player decides the order the Replacement Effects will apply.
 
 **372.2.** If the affected object is an Uncontrolled Battlefield then the Current Turn Player decides the order
 the Replacement Effects will apply.
 
 **373.** If more than one event occurs simultaneously that Replacement Effects could apply to, each event is treated
-separately and individually for the purposes of Replacement Effects, and Replacement Effects with the same
-controller are applied in the order of their controller’s choosing.
+separately and individually for the purposes of Replacement Effects, and Replacement Effects with the
+same controller are applied in the order of their controller’s choosing.
 Example: Two units controlled by the same player die in the same cleanup. That player also controls
 Zhonya’s Hourglass. They must decide which event to apply Zhonya’s Hourglass to first.
 
 **373.1.** Although these events are simultaneous, the applied Replacement Effects are ordered. If multiple
 applied Replacement Effects with different controllers would execute simultaneously, they execute
 in turn order.
+
 **373.1.a.** When executing Replacement Effects, the Game Actions that comprise their instructions
 are performed before any simultaneous unmodified events.
 Example: Two units die simultaneously. One of those units has their death replaced
@@ -165,9 +187,9 @@ that unit will be performed before the other dies.
 **373.2.** When applying Replacement Effects to events that occur simultaneously, each Replacement Effect
 may only be applied in one sequence, to any number of events that are qualified to be replaced.
 Example: Soraka, Wanderer reads “If another unit you control here would die, if it has less
-Might than me, instead heal it, exhaust it, and recall it.” Soraka dies simultaneously with two 1
-[M] Recruit tokens at the same battlefield and two 1 [M] Recruit tokens in base. Soraka has a
-Guardian Angel attached to her when she dies, which appends “If I would die, kill Guardian
+Might than me, instead heal it, exhaust it, and recall it.” Soraka dies simultaneously with two
+1 [M] Recruit tokens at the same battlefield and two 1 [M] Recruit tokens in base. Soraka has
+a Guardian Angel attached to her when she dies, which appends “If I would die, kill Guardian
 Angel instead. Heal me, exhaust me, and recall me” to Soraka’s rules text. There are several
 possible ways to order the Replacement Effects being applied to the various events: If
 Soraka’s Replacement Effect is applied first, it saves the Recruits at the same battlefield as

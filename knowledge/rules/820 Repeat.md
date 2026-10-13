@@ -4,7 +4,7 @@ id: "rule-section:820"
 kind: "rule-section"
 tags: ["riftbound", "knowledge/rule"]
 source: "docs/core_rules.md"
-source_hash: "8da460108493d6a86a724b7a0e575b3c2d1c5b38e200c8ab67cffa22ae7c7042"
+source_hash: "95b133128289f6911489a10cf06c687b8e2401d2218059fa5e5a00c7e199ddcc"
 generated: true
 confidence: "official"
 ---
@@ -30,6 +30,7 @@ ability.
 not paid individually.
 
 **820.1.c.3.** Each Repeat Cost can be paid only a single time.
+
 **820.1.d.** Repeat is functionally short for “You may pay [Cost] as an additional cost as you play this. If
 you do, execute the instructions of this chain item one additional time during resolution.”
 
@@ -51,8 +52,8 @@ my Might to an enemy unit here.”
 
 **820.1.d.2.** Any instructions not performed on resolution of the spell or ability are ignored.
 
-**820.2.** When a spell or ability’s effect is performed an additional time with Repeat, choices must be made at
-the usual time during the Make Relevant Choices step of Playing a Card.
+**820.2.** When a spell or ability’s effect is performed an additional time with Repeat, choices must be made
+at the usual time during the Make Relevant Choices step of Playing a Card.
 See rule 349. Playing Cards for more information.
 
 **820.2.a.** Choices made for the additional execution do not have to be the same as the choices made
@@ -65,7 +66,6 @@ target or a different one. If they choose “Kill a gear” twice and choose two
 different gear, they must specify which gear is the first target and which
 is the second. As the spell resolves, those two gear will be killed in the
 chosen order.
-
 **820.3.** Multiple instances of Repeat can be paid for separately. The spell or ability’s instructions will be
 executed an additional time on resolution for each instance of Repeat that is paid for.
 

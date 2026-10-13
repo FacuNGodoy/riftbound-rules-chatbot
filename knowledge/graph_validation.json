@@ -1,19 +1,37 @@
 {
   "valid": true,
   "errors": [],
-  "warnings": [],
+  "warnings": [
+    "Relación duplicada: ('card:UNNUMBERED-radiance-ahri-confident-champion-unit', 'USES_MECHANIC', 'mechanic:might').",
+    "Relación duplicada: ('card:UNNUMBERED-radiance-ahri-confident-champion-unit', 'USES_MECHANIC', 'mechanic:triggered-ability').",
+    "Relación duplicada: ('card:UNNUMBERED-radiance-akali-brash-champion-unit', 'USES_MECHANIC', 'mechanic:move').",
+    "Relación duplicada: ('card:UNNUMBERED-radiance-akali-brash-champion-unit', 'USES_MECHANIC', 'mechanic:play').",
+    "Relación duplicada: ('card:UNNUMBERED-radiance-akali-brash-champion-unit', 'USES_MECHANIC', 'mechanic:printed-cost').",
+    "Relación duplicada: ('card:UNNUMBERED-radiance-akali-brash-champion-unit', 'USES_MECHANIC', 'mechanic:triggered-ability').",
+    "Relación duplicada: ('card:UNNUMBERED-radiance-evelynn-in-control-champion-unit', 'USES_MECHANIC', 'mechanic:might').",
+    "Relación duplicada: ('card:UNNUMBERED-radiance-evelynn-in-control-champion-unit', 'USES_MECHANIC', 'mechanic:triggered-ability').",
+    "Relación duplicada: ('card:UNNUMBERED-radiance-kai-sa-rebel-champion-unit', 'USES_MECHANIC', 'mechanic:chain').",
+    "Relación duplicada: ('card:UNNUMBERED-radiance-kai-sa-rebel-champion-unit', 'USES_MECHANIC', 'mechanic:might').",
+    "Relación duplicada: ('card:UNNUMBERED-radiance-kai-sa-rebel-champion-unit', 'USES_MECHANIC', 'mechanic:play').",
+    "Relación duplicada: ('card:UNNUMBERED-radiance-kai-sa-rebel-champion-unit', 'USES_MECHANIC', 'mechanic:reaction').",
+    "Relación duplicada: ('card:UNNUMBERED-radiance-kai-sa-rebel-champion-unit', 'USES_MECHANIC', 'mechanic:triggered-ability').",
+    "Relación duplicada: ('card:UNNUMBERED-radiance-seraphine-not-alone-champion-unit', 'USES_MECHANIC', 'mechanic:might').",
+    "Relación duplicada: ('card:UNNUMBERED-radiance-seraphine-not-alone-champion-unit', 'USES_MECHANIC', 'mechanic:play').",
+    "Relación duplicada: ('card:UNNUMBERED-radiance-seraphine-not-alone-champion-unit', 'USES_MECHANIC', 'mechanic:play-trigger').",
+    "Relación duplicada: ('card:UNNUMBERED-radiance-seraphine-not-alone-champion-unit', 'USES_MECHANIC', 'mechanic:triggered-ability')."
+  ],
   "stats": {
-    "nodes": 3218,
-    "edges": 3142,
+    "nodes": 3557,
+    "edges": 3867,
     "node_kinds": {
-      "card": 960,
+      "card": 1143,
       "event": 6,
       "mechanic": 19,
       "property": 2,
-      "rule": 2231
+      "rule": 2387
     },
     "edge_types": {
-      "GOVERNED_BY": 64,
+      "GOVERNED_BY": 61,
       "LINKED_TO": 0,
       "MODIFIES": 1,
       "OCCURS_BEFORE": 5,
@@ -24,7 +42,7 @@
       "RESOLVES_BEFORE": 0,
       "TARGETS": 0,
       "TRIGGERS_AFTER": 1,
-      "USES_MECHANIC": 3065
+      "USES_MECHANIC": 3793
     }
   }
 }

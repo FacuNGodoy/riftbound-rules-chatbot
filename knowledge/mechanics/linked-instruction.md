@@ -21,9 +21,9 @@ confidence: "curated"
 - [[rules/353 The Process of Play|Regla 359.3.e.14.a]]
 - [[rules/353 The Process of Play|Regla 359.3.e.14.b]]
 - [[rules/353 The Process of Play|Regla 359.3.e.14.c]]
-- [[rules/393 Linked Abilities|Regla 394.1]]
+- Regla `394.1` (no encontrada)
 
-## Cartas (43)
+## Cartas (47)
 
 - [[cards/OGN-002|Brazen Buccaneer (OGN-002)]]
 - [[cards/OGN-033|Shakedown (OGN-033)]]
@@ -37,6 +37,10 @@ confidence: "curated"
 - [[cards/OGN-194|Nocturne, Horrifying (OGN-194)]]
 - [[cards/OGN-207|Call to Glory (OGN-207)]]
 - [[cards/OGN-213|Hidden Blade (OGN-213)]]
+- [[cards/RAD-026|Entrenched Boar (RAD-026)]]
+- [[cards/RAD-075|Skystrike Squadron (RAD-075)]]
+- [[cards/RAD-101|An Offer You Can't Refuse (RAD-101)]]
+- [[cards/RAD-125|Dune Devourer (RAD-125)]]
 - [[cards/SFD-005|Detonate (SFD-005)]]
 - [[cards/SFD-024|Rell, Magnetic (SFD-024)]]
 - [[cards/SFD-074|Pickpocket (SFD-074)]]

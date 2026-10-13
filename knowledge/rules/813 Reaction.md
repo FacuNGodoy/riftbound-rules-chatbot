@@ -4,7 +4,7 @@ id: "rule-section:813"
 kind: "rule-section"
 tags: ["riftbound", "knowledge/rule"]
 source: "docs/core_rules.md"
-source_hash: "45e868eb9f2c177cbcdc5c2ab027120d3181f95d4686c073eb3f093f5c193969"
+source_hash: "b34ea3d97054d4fd34207a6b88700b240235d72397439af24aee22c8ac783e61"
 generated: true
 confidence: "official"
 ---
@@ -39,9 +39,8 @@ Permission.
 **813.3.a.** Playing Units with Reaction still has the inherent restrictions of playing Units without
 Reaction. It can only be played to the controlling player's base or a battlefield they control.
 
-**813.4.** Some passive abilities may grant a card or ability Reaction under certain conditions. The card or ability
-does not have the Reaction keyword unless and until those circumstances are true.
-
+**813.4.** Some passive abilities may grant a card or ability Reaction under certain conditions. The card or
+ability does not have the Reaction keyword unless and until those circumstances are true.
 **813.4.a.** Those conditions might only be fulfilled while the card or ability is on the chain. In such a
 case, it can still be played or activated at the appropriate timing as long as doing so could
 fulfill the conditions.
@@ -54,11 +53,12 @@ played from if it is a card.
 
 **813.5.a.** Whether or not a Game Object has Reaction is a characteristic of that Game Object and
 may be checked or referenced by other Game Effects.
+
 **813.5.b.** Whether or not a Spell has Reaction is a characteristic of that Spell and may be checked or
 referenced by other Game Effects.
 
-**813.5.c.** Whether or not an Ability has Reaction is a characteristic of that Ability and may be checked
-or referenced by other Game Effects.
+**813.5.c.** Whether or not an Ability has Reaction is a characteristic of that Ability and may be
+checked or referenced by other Game Effects.
 
 ## Mecánicas relacionadas
 

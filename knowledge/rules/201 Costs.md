@@ -4,7 +4,7 @@ id: "rule-section:201"
 kind: "rule-section"
 tags: ["riftbound", "knowledge/rule"]
 source: "docs/core_rules.md"
-source_hash: "7318e325c8feb73f5abe28a921e1bffa3962247921c74b7372c64331b40f7d48"
+source_hash: "d61dc4f247811cf6616e6814c806a036f743645a7a080193de9b0da1df4a2cc9"
 generated: true
 confidence: "official"
 ---
@@ -29,34 +29,42 @@ perform it, then they cannot pay the Cost and they will not execute the linked E
 
 **204.** Costs paid in this way might be:
 
-**204.1.** Base Costs: These costs are the most fundamental costs that must be paid to finalize a spell or ability.
+**204.1.** Base Costs: These costs are the most fundamental costs that must be paid to finalize a card or
+ability.
 
 **204.1.a.** On cards, the Base Cost is found in the upper left corner of the card.
 
-**204.1.b.** On activated abilities, the Base Cost is the resource or instruction written before the “:”.
+**204.1.b.** On activated abilities, the Base Cost is the resource or instruction written before the “:”. If
+there are multiple choices for costs to pay for an activated ability before the “:”, the Base
+Cost is whatever cost the player chooses from among those options.
+Example: Legion Marauder is a unit that reads in part “[Empower] — [1] or [C].” This
+is functionally short for “[1] or [C]: Empower me. Play only if not empowered.” When
+finalizing the ability to the chain, the controller of the chain item will choose one of
+the base costs to pay. That is the base cost of the ability.
 
-**204.2.** Additional Costs: These Costs are in addition to the base cost of the spell or ability and will include
-“as an additional cost.”
+**204.1.c.** On Triggered Abilities, the Base Cost if it is present is the Costs within Instructions that
+appears as the first part of the effect. It must be paid to finalize the triggered ability.
+See rule 204.3. Costs within Instructions for more information.
 
-**204.2.a.** Additional Costs must be paid to finalize the spell or ability, in addition to the base cost.
-
-**204.3.** Costs within Instructions: These Costs are part of the resolution of a spell or ability, and will take the
-form “[do X] to [do Y].”
-
-**204.3.a.** When Costs within Instructions appear as the first part of the effect in triggered abilities,
-the cost is taken to be the base cost of the triggered ability. It must be paid to finalize the
-triggered ability.
 Example: Overzealous Fan is a unit that reads “When I defend, you may kill me to
 move an attacking unit to its base.” In order to finalize the ability to the chain, its
 controller must kill Overzealous Fan.
 
-**204.3.b.** When Costs within Instructions appear in spells, activated abilities, or in later parts of
+**204.2.** Additional Costs: These Costs are in addition to the base cost of the card or ability and will include
+“as an additional cost.”
+
+**204.2.a.** Additional Costs must be paid to finalize the card or ability, in addition to the base cost.
+
+**204.3.** Costs within Instructions: These Costs are part of the resolution of a spell or ability, and will take the
+form “[do X] to [do Y].”
+
+**204.3.a.** When Costs within Instructions appear in spells, activated abilities, or in later parts of
 triggered abilities, the cost must be paid to get the effect during resolution of the spell or
 ability.
 Example: Bullet Time is a spell that reads “Pay any amount of [A] to deal that much
 damage to all enemy units at a battlefield.” As the spell resolves, its controller pays
-any amount of [A] as a cost, and deals that much damage to all units at a battlefield
-as the effect.
+any amount of [A] as a cost, and deals that much damage to all units at a
+battlefield as the effect.
 
 Example: Ancient Henge is a gear that reads “[Reaction][>] [E]: Pay any amount of
 Energy to Add that much [A].” As the ability resolves, its controller pays any amount
@@ -71,17 +79,17 @@ effect.
 **204.4.** Applied Costs: These Costs are applied to one or more Game Actions, and typically take the form of a
 passive ability with a Cost within Instructions preceded by “must.”
 Example: Mageseeker Investigator reads in part “Opponents must pay [A] for each unit
-beyond the first to move multiple units to my battlefield at the same time.” This is an applied
-cost.
+beyond the first to move multiple units to my battlefield at the same time.” This is an
+applied cost.
 
 **204.4.a.** The associated Game Action is the linked Effect for the Cost.
 
 **204.4.b.** Applied Costs are paid as the Game Action is performed. They do not use the chain and
 cannot be reacted to.
 
-**204.4.b.1.** Abilities that Add resources with the Reaction keyword can be activated at any time
-when costs need to be paid.
-See rule 429. Add for more information.
+**204.4.b.1.** Abilities that Add resources with the Reaction keyword can be activated at any
+time when costs need to be paid.
+See rule 430. Add for more information.
 
 **204.4.c.** If a player can’t pay or chooses not to pay the Applied Cost, they cannot perform the
 associated Game Action.
@@ -93,22 +101,22 @@ Example: A card effect reads, “When I attack, you may pay [4][C]. If you do, k
 a player. The later instruction checks whether the game action was performed, not whether a cost
 was paid—if paying [4][C] was replaced for any reason, the later linked instruction will not execute.
 
-**206.** Effects that need to determine a card’s cost for any purpose always use its printed or copied cost, even if that
-cost is increased, decreased, or ignored as the card is played.
-Example: Sky Splitter is a spell that costs [8] and says in part “This spell's Energy cost is reduced by the
-highest Might among units you control.” Lux, Illuminated is a unit that says “When you play a spell
-that costs 5 or more, give me +3 [M] this turn.” If a player who controls Lux plays Sky Splitter, Lux’s
-ability will trigger, regardless of how much was actually paid for Sky Splitter.
+**206.** Effects that need to determine a card or token’s cost for any purpose always use its printed—or if a copy effect
+is applied, copied—cost, even if that cost is increased, decreased, or ignored as the card is played.
+Example: Sky Splitter is a spell that costs [8] and says in part “This spell's Energy cost is reduced by
+the highest Might among units you control.” Lux, Illuminated is a unit that says “When you play a
+spell that costs 5 or more, give me +3 [M] this turn.” If a player who controls Lux plays Sky Splitter,
+Lux’s ability will trigger, regardless of how much was actually paid for Sky Splitter.
 
 Example: Defy is a spell which reads “Counter a spell that costs no more than [4] and no more than
-[A].” Rocket Barrage is a spell that costs [4][C] and has a Repeat cost of [4][C]. Rocket Barrage is a legal
-target for Defy even if Rocket Barrage’s Repeat cost is paid, because Defy only checks the printed or
-copied cost of its target.
+[A].” Rocket Barrage is a spell that costs [4][C] and has a Repeat cost of [4][C]. Rocket Barrage is a
+legal target for Defy even if Rocket Barrage’s Repeat cost is paid, because Defy only checks the
+printed or copied cost of its target.
 
 Example: Atakhan is a unit that reads in part “You may kill a friendly unit as an additional cost to play
-me. If you do, I cost [1] less for each Energy it costs and [Y] less for each Power it costs.” If a player plays
-Atakhan and chooses to kill a Reflection token that is currently a copy of Noxus Hopeful, Atakhan will
-cost [4] less.
+me. If you do, I cost [1] less for each Energy it costs and [Y] less for each Power it costs.” If a player
+plays Atakhan and chooses to kill a Reflection token that is currently a copy of Noxus Hopeful,
+Atakhan will cost [4] less.
 
 **206.1.** Effects that need to determine an ability’s cost for any purpose use its base cost, ignoring any
 alterations to that base cost unless otherwise specified.
@@ -122,6 +130,7 @@ Example: An equipment has an ability that reads “Equip [4][A]. This ability co
 each occupied enemy battlefield.” If its controller plays a unit with Weaponmaster, the
 Weaponmaster trigger will refer to the cost including the alterations. This is because
 Weaponmaster specifies that it includes modifications to the cost.
+
 
 ## 300. Playing the Game
 

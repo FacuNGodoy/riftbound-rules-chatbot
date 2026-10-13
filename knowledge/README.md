@@ -9,7 +9,7 @@ status: active
 # Riftbound Knowledge Vault
 
 > [!INFO] Estado
-> Vault generado desde fuentes versionadas: **960 cartas**, **26 secciones de reglas** y **19 mecánicas**.
+> Vault generado desde fuentes versionadas: **1143 cartas**, **23 secciones de reglas** y **19 mecánicas**.
 
 ## Navegación
 

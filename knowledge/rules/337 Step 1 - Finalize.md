@@ -4,7 +4,7 @@ id: "rule-section:337"
 kind: "rule-section"
 tags: ["riftbound", "knowledge/rule"]
 source: "docs/core_rules.md"
-source_hash: "4e4e0e5a769d032311a84de98f2c59651a84d71931f8279f6d2f5f2d3da7c00b"
+source_hash: "cc1c948c66bc2b3ff5a6d411449dcbfe49c1a6ad3b3bc5836d54a7b7381ca366"
 generated: true
 confidence: "official"
 ---
@@ -26,10 +26,10 @@ See rule 349. Playing Cards for more information on finalizing chain items.
 immediately—Move to Step 4: Resolve.
 See rule 349. Playing Cards for more information.
 
-**337.3.** If, after finalizing the Chain Item, there are still Pending Chain Items, return to step 1. Finalize.
+**337.3.** If, after finalizing the Chain Item, there are still Pending Chain Items, return to Step 1. Finalize.
 
 **337.4.** If, after finalizing the Chain Item, there are no more items on the chain to be Finalized, the controller
-of the next item on the chain gains Priority. Move to step 2: Execute.
+of the next item on the chain gains Priority. Move to Step 2: Execute.
 
 ## Mecánicas relacionadas
 

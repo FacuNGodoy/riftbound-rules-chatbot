@@ -4,7 +4,7 @@ id: "rule-section:327"
 kind: "rule-section"
 tags: ["riftbound", "knowledge/rule"]
 source: "docs/core_rules.md"
-source_hash: "91f66cb9fb6cc064e79d82a204a0052f547180a9a3bbab7ee130f6b6f8a414cd"
+source_hash: "09b96a4e362ab22cb4e753833b6dfaa7e73be04e283b429fc7956bbbe24948ad"
 generated: true
 confidence: "official"
 ---
@@ -14,7 +14,7 @@ confidence: "official"
 > [!NOTE] Fuente oficial
 > Sección extraída de `docs/core_rules.md`.
 
-**328.** The Chain is a Non-Board Zone that temporarily exists whenever a card is played or an ability is activated.
+**328.** The Chain is a Non-Board Zone that temporarily exists whenever a card or ability is played.
 
 **328.1.** Cards, abilities, and tokens are placed here as part of the process of being played.
 See rule 349. The Process of Play for more information.
@@ -27,7 +27,6 @@ Chain Items.
 
 **329.2.** Chain Items are Pending until the “Check Legality” step of playing a card.
 See rule 349. Playing Cards for more information.
-
 **329.3.** When a Pending Chain Item is no longer Pending it is finalized and becomes a Finalized Chain
 Item.
 
@@ -35,8 +34,8 @@ Item.
 
 **330.1.** Only one Chain can exist at a time.
 
-**330.2.** If a card or token would begin to be played while a Chain already exists, it is placed on the existing
-Chain.
+**330.2.** If a card, token, or ability would begin to be played while a Chain already exists, it is placed on the
+existing Chain.
 
 **331.** The State of the Turn is partially determined by whether or not the Chain currently exists.
 
@@ -58,7 +57,7 @@ Process, throughout Combat in its various steps, and the actions performed durin
 Process.
 See rule 318. Cleanups for more information on Cleanups
 See rule 315. Start of Turn for more information on the Start of Turn process
-See rule 459. Combat for more information on the steps of Combat
+See rule 461. Combat for more information on the steps of Combat
 See rule 317. Ending Phase for more information.
 
 **334.** Whenever a Player takes one or more actions that incur Tasks they should refer to the process of HOT FEPR:
@@ -66,6 +65,7 @@ Handle Outstanding Tasks; then Finalize, Execute, Pass, Resolve.
 
 **334.1.** In the course of Handling Outstanding Tasks, Chain Items may be added to the Chain. They will
 remain there until the Tasks are complete.
+
 **334.2.** When all Outstanding Tasks are completed, all pending Chain Items will subsequently be processed
 by the FEPR process.
 
@@ -76,8 +76,8 @@ process and then pause and complete the necessary Tasks before continuing.
 Main Phase, the Turn Player receives priority. If there are no Outstanding Tasks, no pending Chain Items, no
 ongoing Showdown, and it is any other phase of the turn, proceed to the next substep, step, phase, or turn.
 
-**335.1.** If there are no Outstanding Tasks, no pending Chain Items, and there is an ongoing Showdown, the
-player with Focus receives priority.
+**335.1.** If there are no Outstanding Tasks, no pending Chain Items, and there is an ongoing Showdown,
+the player with Focus receives priority.
 
 **336.** When there are no outstanding Tasks and there are pending Chain Items on the Chain, players should refer
 to the FEPR process to proceed.

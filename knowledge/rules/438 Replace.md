@@ -4,7 +4,7 @@ id: "rule-section:438"
 kind: "rule-section"
 tags: ["riftbound", "knowledge/rule"]
 source: "docs/core_rules.md"
-source_hash: "61b06ec51217cf1c13e4db3d766dad60c4122eac2bec7c205383df105f20480d"
+source_hash: "d2ae25a142d5fb3de3e2feae910ff0d8967ba1624b9df3e49983707fd7445db7"
 generated: true
 confidence: "official"
 ---
@@ -14,53 +14,66 @@ confidence: "official"
 > [!NOTE] Fuente oficial
 > Sección extraída de `docs/core_rules.md`.
 
-**438.1.** Replacing is the act of Creating a token in the place of another card or token without playing it while
-inheriting all effects or statuses of the game object it replaced.
+**438.** Prevent
 
-**438.1.a.** The replacing token is treated as the same Game Object as the card or token it replaced for
-the purposes of Game Effects that target or reference that game object.
-Example: A player with Green Father as their legend conquers Navori Fighting Pit.
-They choose to place the Green Father conquer effect on the chain after the Navori
-Fighting Pit conquer effect. When the Green Father trigger resolves, Navori
-Fighting Pit is replaced with Brush. Although the Navori Fighting Pit has been
-replaced, the “here” in its triggered ability still can have its information referenced,
-because the Brush inherited all statuses and conditions. The unit Navori Fighting
-Pit’s triggered ability has targeted will still be a legal target on resolution.
+**438.1.** Preventing damage is the act of reducing the Damage a set of game objects would take.
 
-**438.2.** Replacing is a Limited Action.
+**438.1.a.** Prevent is an action that interacts with Damage.
 
-**438.2.a.** The player may Replace cards and tokens when instructed to do so by other game effects.
+**438.1.a.1.** Prevent includes any applied Bonus Damage when determining the total damage
+being prevented.
 
-**438.3.** This action, when instructed, is formatted as "Replace [X] with [Y]."
+**438.1.b.** Prevent appears in statements that define an amount of damage and the source of the
+damage it will affect, as well as the timespan it will be relevant for.
 
-**438.3.a.** The [X] is the target to be Replaced.
+**438.1.b.1.** Prevent actions are usually formatted as “Prevent the next X [source] damage
+that would be dealt to a [unit] this turn.”
 
-**438.3.b.** The [Y] is the object that will Replace the target.
+438.1.b.1.a.                                         The X is referred to as the Prevent Value.
 
-**438.3.b.1.** This will always specify a Token to create.
+438.1.b.1.b.                                         X can be “All,” which specifies an infinite amount of damage.
 
-**438.4.** Replacing is not a subset of Banishing.
+**438.1.b.2.** Prevent will always apply to the next damage that would be dealt to a unit
+affected by the Prevent action.
 
-**438.5.** The card or token that is Replaced is placed in Banishment.
+**438.2.** When damage is Prevented, it is replaced with an event where the source of the damage deals that
+much damage reduced by the Prevent Value tracked on the Unit specifically.
 
-**438.5.a.** While it resides in Banishment, it is considered to have been Replaced and not Banished.
+**438.2.a.** The damage being dealt as a result of Preventing can never be less than 0, but can be 0.
+This is equivalent to not dealing damage.
+**438.3.** When damage is dealt this way, reduce the Prevent Value being tracked on the Unit affected by the
+Prevent action by the prevented amount.
 
-**438.6.** If a token is Replaced it will stop existing once it begins its occupancy in Banishment.
+**438.3.a.** If the Prevent Value is 0 or less, then Prevent is no longer being tracked on the Unit in
+question, and the effect expires.
 
-**438.6.a.** This does not invalidate the token created, or the act of Replacement.
+**438.3.b.** The reduced value is the newly tracked Prevent Value.
 
-**438.7.** Tokens that have been Created through a Replace action can be instructed to be “Swapped back.”
-This may also appear as “replace [the token] with the [Game Object] it replaced.”
+**438.3.c.** If the Prevent Value is “All” then it remains “All.”
 
-**438.7.a.** Swapping Back is an extension of the Replace action.
+**438.4.** Damage dealt to a Unit that has that all of that damage Prevented is not considered to have been
+dealt to it at all.
 
-**438.7.b.** To Swap Back, the token stops existing and the original card is returned to the space that
-the token just occupied, inheriting all current effects and statuses.
+**438.5.** Damage can still be assigned to Units in combat that are affected by Prevent. The damage dealt as
+a result of that assignment will be affected by the Prevent action.
 
-**438.7.b.1.** Any card that has been Replaced by that token or any tokens it Replaced is eligible
-to swap back in this way.
+**438.5.a.** Damage can be assigned to a Unit up to a value that would be Lethal considering the
+Prevent Value of all Prevent Actions on a Unit, following the normal rules for damage
+assignment.
+Example: A unit with 2 [M] is being assigned damage in the combat damage step.
+The unit has “prevent the first 3 damage I would take each combat.” The unit
+would need to be assigned 5 damage in order to have lethal damage assigned to
+it.
 
-**438.7.c.** If there is nothing in Banishment to swap back to then this object can never swap back.
+**438.5.b.** No amount of damage is ever considered lethal if the Prevent Value is “All.”
+
+**438.6.** Prevent is a Limited Action.
+
+**438.6.a.** Players may only Prevent Damage when directed to by Game Effects.
+
+**438.7.** Prevent is a Delayed Replacement Effect.
+See rule 367. Replacement Effects for more information.
+See rule 390. Delayed Abilities for more information.
 
 ## Mecánicas relacionadas
 

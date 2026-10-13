@@ -4,7 +4,7 @@ id: "rule-section:340"
 kind: "rule-section"
 tags: ["riftbound", "knowledge/rule"]
 source: "docs/core_rules.md"
-source_hash: "1186bdfe0c00f91c191be268f477c0c7fa5391f23000fccb046e958185bc6619"
+source_hash: "c0db41aa5e6b898f98f2bac359aea4b59043745946199d7de88465fd384b19b0"
 generated: true
 confidence: "official"
 ---
@@ -16,7 +16,7 @@ confidence: "official"
 
 **340.1.** The newest Finalized Chain Item resolves. Execute its game effects in their entirety.
 See rule 349. Playing Cards for more information on resolving spells.
-See rule 398. Playing or Activating Abilities for more information on resolving abilities.
+See rule 399. Playing or Activating Abilities for more information on resolving abilities.
 
 **340.2.** If the Chain is empty, play proceeds in an Open State.
 
