@@ -468,6 +468,19 @@ def find_cards_in_text(text: str) -> tuple[list[dict], list[str]]:
             if len(candidates) > 1:
                 candidates = disambiguate_by_subtitle(name, candidates, text_lower)
             new_candidates = [c for c in candidates if c["card_number"] not in seen_numbers]
+            # Deduplicar overnumbers/alt-arts: si múltiples candidatos tienen mismo tipo/dominios/texto,
+            # conservar el de menor número de carta (versión regular sobre overnumber)
+            def _card_sig(c):
+                return (c.get("type", ""), tuple(sorted(c.get("domains", []))), c.get("rules_text", ""), c.get("effect_text", ""))
+            def _num(card):
+                try: return int(card["card_number"].split("-")[1])
+                except: return 9999
+            seen_sigs: dict = {}
+            for c in new_candidates:
+                sig = _card_sig(c)
+                if sig not in seen_sigs or _num(c) < _num(seen_sigs[sig]):
+                    seen_sigs[sig] = c
+            new_candidates = list(seen_sigs.values())
             # Detectar ambigüedad
             if len(new_candidates) > 1:
                 options = []
