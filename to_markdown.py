@@ -78,10 +78,11 @@ TOURNEY_SECTIONS = {
     "000": "Golden Rule",
     "100": "Introduction",
     "200": "Definitions",
-    "300": "Tournament Procedures",
-    "400": "Infractions and Penalties",
+    "300": "Eligibility",
+    "400": "Policies",
     "500": "Communication",
     "600": "Competition Formats",
+    "700": "Enforcement and Penalties",
 }
 
 
@@ -110,13 +111,14 @@ def pdf_to_markdown(text: str, sections: dict, subsections: dict, title: str) ->
 
     for line in lines:
         # Detectar secciones principales (## )
-        m = re.match(r"^(\d{3})\.\s+(.*)", line)
+        # El texto tras el número es opcional: en RUP5 "500." y "600." van solas.
+        m = re.match(r"^(\d{3})\.(?:\s+(.*))?$", line)
         if m:
             num = m.group(1)
             if num in sections:
                 output.append(f"\n## {num}. {sections[num]}\n")
                 # Si la linea tiene mas texto que el titulo de seccion, agregarlo
-                rest = m.group(2).strip()
+                rest = (m.group(2) or "").strip()
                 if rest and rest != sections[num]:
                     output.append(f"**{num}.** {rest}")
                 continue
@@ -128,9 +130,9 @@ def pdf_to_markdown(text: str, sections: dict, subsections: dict, title: str) ->
                 continue
 
         # Mantener reglas con su numero en negrita
-        m = re.match(r"^(\d{3}(?:\.\d+)*(?:\.[a-z](?:\.\d+)*)?)\.\s+(.*)", line)
+        m = re.match(r"^(\d{3}(?:\.\d+)*(?:\.[a-z](?:\.\d+)*)?)\.(?:\s+(.*))?$", line)
         if m:
-            output.append(f"**{m.group(1)}.** {m.group(2)}")
+            output.append(f"**{m.group(1)}.** {m.group(2) or ''}".rstrip())
         else:
             output.append(line)
 
@@ -223,8 +225,8 @@ def main():
 
     # 2. Tournament Rules PDF
     print("Convirtiendo Tournament Rules...")
-    raw = (RAW_DIR / "Riftbound Tournament Rules RUP4.txt").read_text(encoding="utf-8")
-    md = pdf_to_markdown(raw, TOURNEY_SECTIONS, {}, "Riftbound Tournament Rules RUP4")
+    raw = (RAW_DIR / "Riftbound Tournament Rules RUP5.txt").read_text(encoding="utf-8")
+    md = pdf_to_markdown(raw, TOURNEY_SECTIONS, {}, "Riftbound Tournament Rules RUP5")
     (MD_DIR / "tournament_rules.md").write_text(md, encoding="utf-8")
     print(f"  -> tournament_rules.md ({len(md):,} chars)")
 

@@ -252,8 +252,12 @@ def validate_graph(graph: dict[str, Any]) -> dict[str, Any]:
     counts: dict[str, int] = {}
     for node in graph["nodes"]:
         counts[node["kind"]] = counts.get(node["kind"], 0) + 1
-    if counts.get("card") != 1143:
-        errors.append(f"Se esperaban 1143 cartas y hay {counts.get('card', 0)}.")
+    expected_cards = len(json.loads(CARDS_FILE.read_text(encoding="utf-8")))
+    if counts.get("card") != expected_cards:
+        errors.append(
+            f"Se esperaban {expected_cards} cartas (las de cards.json) "
+            f"y hay {counts.get('card', 0)}."
+        )
 
     catalog = json.loads(CATALOG_FILE.read_text(encoding="utf-8"))
     for mechanic in catalog:

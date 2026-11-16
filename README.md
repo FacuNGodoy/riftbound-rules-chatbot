@@ -19,7 +19,7 @@ Autor: **Facundo Nahuel Godoy**.
 | Frontend | HTML / CSS / JS (chat único) |
 | Backend | Python, FastAPI |
 | Memoria de reglas | ChromaDB + embeddings `gemini-embedding-001` |
-| Cartas | `cards.json` (~960 cartas) |
+| Cartas | `cards.json` (~1100 cartas) |
 | Juez (nube) | Gemini Flash (cadena draft + verifier) |
 | Visión | Gemini multimodal en Render / Ollama + `minicpm-v` en local |
 | Publicación | Render (Web Service + Docker) |

@@ -1,6 +1,6 @@
 """
 Backend FastAPI: recibe preguntas (con imágenes opcionales),
-busca contexto en ChromaDB, genera respuestas con Qwen via Ollama.
+busca contexto en ChromaDB, genera respuestas con Gemini.
 """
 
 from fastapi import FastAPI, UploadFile, File, Form
@@ -433,7 +433,7 @@ def find_cards_in_text(text: str) -> tuple[list[dict], list[str]]:
     ambiguities = []
 
     # 1. Buscar por número de carta (ej: SFD-185, OGN-006)
-    for m in re.finditer(r'(OGS|OGN|SFD|UNL|VEN)-(\d{1,3})', text, re.IGNORECASE):
+    for m in re.finditer(r'(OGS|OGN|SFD|UNL|VEN|RAD)-(\d{1,3})', text, re.IGNORECASE):
         card_id = f"{m.group(1).upper()}-{int(m.group(2)):03d}"
         if card_id in CARDS_BY_NUMBER and card_id not in seen_numbers:
             found.append(CARDS_BY_NUMBER[card_id])

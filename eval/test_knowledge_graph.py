@@ -32,7 +32,7 @@ class KnowledgeGraphTests(unittest.TestCase):
     def test_generated_graph_is_valid(self):
         report = validate_graph(build_graph())
         self.assertTrue(report["valid"], report["errors"])
-        self.assertEqual(report["stats"]["node_kinds"]["card"], 960)
+        self.assertEqual(report["stats"]["node_kinds"]["card"], 1127)
         self.assertFalse(report["warnings"])
 
     def test_graph_cases_have_exact_coverage(self):

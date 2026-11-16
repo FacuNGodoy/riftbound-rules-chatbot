@@ -11,14 +11,16 @@ from pathlib import Path
 from playwright.sync_api import sync_playwright, TimeoutError as PWTimeout
 
 OUTPUT_FILE = Path(__file__).resolve().parent / "cards.json"
-BASE_URL = "https://piltoverarchive.com/cards?sets=RAD"
+BASE_URL = "https://piltoverarchive.com/cards?sets=RAD&variants=standard"
 TOTAL_PAGES = 6
+SCRAPE_SET_NAME = "Radiance"   # las cartas de este set se vuelven a scrapear desde cero
+EXPECTED_FILTER_COUNT = 168    # lo que muestra el sitio con Set=RAD + Variant=Standard
 
 DOMAIN_NAMES = {"Body", "Calm", "Fury", "Mind", "Chaos", "Order"}
 TYPE_NAMES = {"Champion Unit", "Signature Spell", "Legend", "Unit", "Spell", "Gear", "Rune", "Battlefield"}
 RARITY_NAMES = {"Legend", "Epic", "Rare", "Uncommon", "Common", "Token"}
 
-SETS = {"OGS": 24, "OGN": 298, "SFD": 221, "UNL": 219, "VEN": 166, "RAD": 214}
+SETS = {"OGS": 24, "OGN": 298, "SFD": 221, "UNL": 219, "VEN": 166, "RAD": 167}
 
 SECTION_LABELS = {"description", "effect", "might"}
 
@@ -155,6 +157,11 @@ def main():
     scraped_numbers = set()
     if OUTPUT_FILE.exists():
         cards = json.loads(OUTPUT_FILE.read_text(encoding="utf-8"))
+        # Se descartan las cartas viejas del set a scrapear (incluye alts y las
+        # sin número): se vuelven a traer solo las versiones Standard.
+        before = len(cards)
+        cards = [c for c in cards if c.get("set") != SCRAPE_SET_NAME]
+        print(f"Descartadas {before - len(cards)} cartas previas de {SCRAPE_SET_NAME}")
         scraped_numbers = {c["card_number"] for c in cards if c.get("card_number")}
         print(f"Cargadas {len(cards)} cartas previas")
 
@@ -175,6 +182,17 @@ def main():
                 time.sleep(1)
         except Exception:
             pass
+
+        # Verificar que el filtro Standard quedó aplicado antes de scrapear.
+        m = re.search(r"(\d+)\s+cards", page.locator("body").inner_text())
+        site_count = int(m.group(1)) if m else None
+        print(f"El sitio muestra {site_count} cartas (esperado {EXPECTED_FILTER_COUNT})")
+        if site_count != EXPECTED_FILTER_COUNT:
+            browser.close()
+            raise SystemExit(
+                "El conteo no coincide: el filtro Standard no se aplicó. "
+                "No se scrapea nada para no mezclar alts."
+            )
 
         for pg in range(1, TOTAL_PAGES + 1):
             url = f"{BASE_URL}&page={pg}"
@@ -209,8 +227,16 @@ def main():
                             scraped_numbers.add(data["card_number"])
                             print(f"  [{i+1}/{len(card_imgs)}] {data['name']} ({data['card_number']})")
                         elif not data["card_number"]:
-                            cards.append(data)
-                            print(f"  [{i+1}/{len(card_imgs)}] {data['name']} (sin número)")
+                            key = (data["name"], data["type"], data["set"])
+                            if any(
+                                not c.get("card_number")
+                                and (c["name"], c["type"], c["set"]) == key
+                                for c in cards
+                            ):
+                                print(f"  [{i+1}/{len(card_imgs)}] {data['name']} (sin número, ya existe)")
+                            else:
+                                cards.append(data)
+                                print(f"  [{i+1}/{len(card_imgs)}] {data['name']} (sin número)")
                         else:
                             print(f"  [{i+1}/{len(card_imgs)}] {data['name']} (ya existe)")
                     else:
