@@ -29,6 +29,91 @@ fetch("/config")
     })
     .catch(() => {});
 
+// Brasas que suben por el fondo. Delay negativo: al cargar ya están a mitad de vuelo.
+const backdrop = document.querySelector(".backdrop");
+if (backdrop && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const emberColors = ["#c42b45", "#e63255", "#c9a36a", "#f0c987"];
+    for (let i = 0; i < 25; i++) {
+        const ember = document.createElement("span");
+        ember.className = "ember";
+        ember.style.setProperty("--x", `${(Math.random() * 100).toFixed(1)}%`);
+        ember.style.setProperty("--s", `${(2 + Math.random() * 4).toFixed(1)}px`);
+        ember.style.setProperty("--c", emberColors[i % emberColors.length]);
+        ember.style.setProperty("--t", `${(9 + Math.random() * 10).toFixed(1)}s`);
+        ember.style.setProperty("--d", `${(-Math.random() * 18).toFixed(1)}s`);
+        ember.style.setProperty("--dx", `${Math.round(Math.random() * 120 - 60)}px`);
+        ember.style.setProperty("--o", (0.5 + Math.random() * 0.5).toFixed(2));
+        backdrop.appendChild(ember);
+    }
+}
+
+// Chip de consultas restantes hoy con el modelo principal (estimación del servidor).
+const usageChip = document.getElementById("usage-chip");
+let lastUsageRemaining = null;
+
+function renderUsage(usage) {
+    if (!usageChip || !usage || typeof usage.remaining !== "number") return;
+    usageChip.hidden = false;
+    usageChip.classList.remove("low", "empty");
+    if (usage.remaining <= 0) {
+        usageChip.classList.add("empty");
+        usageChip.textContent =
+            `0/${usage.limit} preguntas disponibles · el chat sigue funcionando, pero sin tanta fiabilidad`;
+    } else {
+        if (usage.remaining <= Math.ceil(usage.limit * 0.2)) usageChip.classList.add("low");
+        usageChip.textContent = `${usage.remaining}/${usage.limit} preguntas disponibles`;
+    }
+
+    const lines = [
+        `Cuando llegue a 0/${usage.limit} el chat sigue funcionando, pero las respuestas no serán tan fiables.`,
+    ];
+    const reset = new Date(usage.resets_at);
+    if (!Number.isNaN(reset.getTime())) {
+        lines.push(
+            "Se reinicia: " +
+                reset.toLocaleString("es-AR", {
+                    weekday: "short",
+                    hour: "2-digit",
+                    minute: "2-digit",
+                })
+        );
+    }
+    usageChip.title = lines.join("\n");
+
+    if (lastUsageRemaining !== null && lastUsageRemaining !== usage.remaining) {
+        usageChip.classList.remove("bump");
+        void usageChip.offsetWidth; // reinicia la animación
+        usageChip.classList.add("bump");
+    }
+    lastUsageRemaining = usage.remaining;
+}
+
+async function refreshUsage() {
+    try {
+        const res = await fetch("/usage");
+        if (res.ok) renderUsage(await res.json());
+    } catch (err) {
+        // sin /usage el chip simplemente no aparece
+    }
+}
+refreshUsage();
+
+// El contador de cartas del header sube desde 0 al cargar.
+const cardCount = document.getElementById("card-count");
+if (cardCount && !window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+    const target = Number(cardCount.dataset.target) || 0;
+    const duration = 1400;
+    let startTime = null;
+    const tick = (now) => {
+        if (startTime === null) startTime = now;
+        const t = Math.min((now - startTime) / duration, 1);
+        cardCount.textContent = Math.round(target * (1 - Math.pow(1 - t, 3)));
+        if (t < 1) requestAnimationFrame(tick);
+    };
+    cardCount.textContent = "0";
+    setTimeout(() => requestAnimationFrame(tick), 500);
+}
+
 if (examples) {
     examples.addEventListener("click", (e) => {
         const chip = e.target.closest(".example");
@@ -65,19 +150,100 @@ const statusLabels = {
     verify: "Verificando ruling...",
 };
 
+// Pasos visibles del pipeline. "Grafo" solo aparece si la pregunta lo usa.
+const stepDefs = [
+    { label: "Buscar" },
+    { label: "Grafo" },
+    { label: "Redactar" },
+    { label: "Verificar" },
+];
+const statusToStep = { searching: 0, graph: 1, draft: 2, draft_retry: 2, verify: 3 };
+
+function updateSteps(el, status) {
+    const current = statusToStep[status];
+    if (current === undefined) return;
+    const items = el.querySelectorAll(".steps li");
+    const visited = (el._visited = el._visited || new Set());
+    // En el reintento se vuelve atrás: lo posterior queda pendiente otra vez.
+    for (let i = current + 1; i < items.length; i++) visited.delete(i);
+    visited.add(current);
+    items.forEach((item, i) => {
+        item.classList.remove("done", "active", "skipped");
+        if (i === current) item.classList.add("active");
+        else if (i < current) item.classList.add(visited.has(i) ? "done" : "skipped");
+    });
+}
+
+// Modo demo: abrir /?demo=1 simula respuestas en el navegador, sin llamar al
+// servidor ni gastar cuota. Sirve para ver las animaciones.
+const demoMode = new URLSearchParams(location.search).has("demo");
+let demoIndex = 0;
+const demoResults = [
+    {
+        answer: "[Demo] Respuesta de ejemplo con **veredicto SI**. Este texto es simulado y no sale del reglamento.",
+        verdict: "SI",
+        confidence: "ALTA",
+        citations: [{ title: "Regla de ejemplo", source: "demo", text: "Texto de ejemplo para la demo." }],
+    },
+    {
+        answer: "[Demo] Respuesta de ejemplo con **veredicto NO**. Este texto es simulado y no sale del reglamento.",
+        verdict: "NO",
+        confidence: "MEDIA",
+        citations: [
+            { title: "Regla de ejemplo A", source: "demo", text: "Primer texto de ejemplo." },
+            { title: "Regla de ejemplo B", source: "demo", text: "Segundo texto de ejemplo." },
+        ],
+    },
+    {
+        answer: "[Demo] Respuesta de ejemplo **no resuelta**. Este texto es simulado.",
+        verdict: "NO_RESUELTO",
+        confidence: "BAJA",
+        citations: [],
+    },
+];
+function sleep(ms) {
+    return new Promise((resolve) => setTimeout(resolve, ms));
+}
+async function demoRequest() {
+    for (const status of ["searching", "graph", "draft", "verify"]) {
+        setLoadingStatus(status);
+        await sleep(1000);
+    }
+    return demoResults[demoIndex++ % demoResults.length];
+}
+if (demoMode) {
+    const note = document.querySelector(".footer-note");
+    if (note) note.textContent = "Modo demo: las respuestas son simuladas y no consumen cuota.";
+}
+
 function showLoading() {
     const div = document.createElement("div");
     div.className = "loading";
     div.id = "loading-indicator";
 
-    const spinner = document.createElement("div");
-    spinner.className = "spinner";
-    div.appendChild(spinner);
+    const row = document.createElement("div");
+    row.className = "loading-row";
+
+    const dots = document.createElement("div");
+    dots.className = "dots";
+    for (let i = 0; i < 3; i++) dots.appendChild(document.createElement("span"));
+    row.appendChild(dots);
 
     const text = document.createElement("span");
     text.className = "loading-text";
     text.textContent = loadingMessages[0];
-    div.appendChild(text);
+    row.appendChild(text);
+    div.appendChild(row);
+
+    const steps = document.createElement("ol");
+    steps.className = "steps";
+    for (const def of stepDefs) {
+        const li = document.createElement("li");
+        li.textContent = def.label;
+        steps.appendChild(li);
+    }
+    div.appendChild(steps);
+    updateSteps(div, "searching");
 
     chat.appendChild(div);
     chat.scrollTop = chat.scrollHeight;
@@ -99,6 +265,7 @@ function showLoading() {
 function setLoadingStatus(status) {
     const el = document.getElementById("loading-indicator");
     if (!el) return;
+    updateSteps(el, status);
     const label = statusLabels[status];
     if (label) {
         el.dataset.serverStatus = "1";
@@ -303,6 +470,19 @@ form.addEventListener("submit", async (e) => {
 
     const loadingInterval = showLoading();
 
+    if (demoMode) {
+        const demo = await demoRequest();
+        hideLoading(loadingInterval);
+        addMessage(demo.answer, "bot", [], null, {
+            verdict: demo.verdict,
+            confidence: demo.confidence,
+            citations: demo.citations,
+        });
+        btn.disabled = false;
+        input.focus();
+        return;
+    }
+
     try {
         const res = await fetch("/ask-stream", {
             method: "POST",
@@ -352,6 +532,7 @@ form.addEventListener("submit", async (e) => {
         addMessage("Error al conectar con el servidor.", "bot");
     }
 
+    refreshUsage();
     btn.disabled = false;
     input.focus();
 });

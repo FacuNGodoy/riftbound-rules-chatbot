@@ -14,6 +14,8 @@ import json
 import os
 import re
 import time
+from datetime import datetime, timedelta, timezone
+from zoneinfo import ZoneInfo
 from dotenv import load_dotenv
 import chromadb
 from google import genai
@@ -61,7 +63,6 @@ GEMINI_MODEL = "gemini-3.8-flash"
 DRAFT_MODELS = [
     GEMINI_MODEL,
     "gemini-3.6-flash",
-    "gemini-3.5-flash",
     "gemini-3-flash-preview",
     "gemini-3.5-flash-lite",
 ]
@@ -86,7 +87,6 @@ VISION_MODEL = "minicpm-v"
 VISION_GEMINI_MODELS = [
     GEMINI_MODEL,
     "gemini-3.6-flash",
-    "gemini-3.5-flash",
     "gemini-3-flash-preview",
     "gemini-3.5-flash-lite",
 ]
@@ -320,6 +320,7 @@ def identify_card_with_gemini(image_bytes: bytes, mime_type: str) -> str:
                 config=config,
             )
             if response.text:
+                record_model_use(model_name)
                 return response.text
             raise RuntimeError(f"{model_name} no devolvió texto para la imagen")
         except Exception as exc:
@@ -327,6 +328,11 @@ def identify_card_with_gemini(image_bytes: bytes, mime_type: str) -> str:
             if is_quota_error(exc):
                 quota_cooldown[model_name] = (
                     time.monotonic() + QUOTA_COOLDOWN_SECONDS
+                )
+                record_model_use(model_name, exhausted=True)
+            elif is_model_not_found_error(exc):
+                quota_cooldown[model_name] = (
+                    time.monotonic() + MODEL_UNAVAILABLE_COOLDOWN_SECONDS
                 )
             if is_retryable_error(exc) or is_model_unavailable_error(exc):
                 print(
@@ -986,6 +992,106 @@ def model_available(model_name: str) -> bool:
     return False
 
 
+# Un 404 del modelo (no existe para esta cuenta, o fue retirado) se recuerda un rato:
+# sin esto, cada pregunta pierde un intento fallido contra ese modelo.
+MODEL_UNAVAILABLE_COOLDOWN_SECONDS = 1800
+
+
+def is_model_not_found_error(exc: Exception) -> bool:
+    """Más estricto que is_model_unavailable_error: no busca "404" suelto en el texto."""
+    text = str(exc).lower()
+    return getattr(exc, "code", None) == 404 or "not_found" in text
+
+
+# Contador de consultas con el modelo principal (los Flash del draft).
+# Los Lite no se cuentan: tienen 500 por día y el verifier casi no los agota.
+# Solo suma llamadas exitosas de este proceso, así que es una estimación: si la
+# misma clave se usa desde otro lado, o la instancia se reinicia (Render free se
+# duerme y pierde el archivo), el contador puede mostrar de más.
+PACIFIC_TZ = ZoneInfo("America/Los_Angeles")  # la cuota de Google se reinicia a su medianoche
+USAGE_FILE = BASE_DIR / "usage_state.json"
+FLASH_DAILY_LIMIT = int(os.environ.get("RIFTBOUND_QUOTA_FLASH_RPD", "20"))
+usage_state: dict = {"day": "", "used": {}}
+
+
+def is_quality_model(model_name: str) -> bool:
+    return "lite" not in model_name.lower()
+
+
+def quality_models() -> list[str]:
+    names: list[str] = []
+    for name in DRAFT_MODELS:
+        if is_quality_model(name) and name not in names:
+            names.append(name)
+    return names
+
+
+def load_usage_state() -> None:
+    try:
+        data = json.loads(USAGE_FILE.read_text(encoding="utf-8"))
+        if isinstance(data, dict) and isinstance(data.get("used"), dict):
+            usage_state["day"] = str(data.get("day", ""))
+            usage_state["used"] = {str(k): int(v) for k, v in data["used"].items()}
+    except (OSError, ValueError, TypeError):
+        pass  # sin archivo o ilegible: se empieza de cero
+
+
+def save_usage_state() -> None:
+    try:
+        USAGE_FILE.write_text(json.dumps(usage_state), encoding="utf-8")
+    except OSError as exc:
+        print(f"USO: no pude guardar {USAGE_FILE.name}: {exc}")
+
+
+def roll_usage_day() -> None:
+    today = datetime.now(PACIFIC_TZ).date().isoformat()
+    if usage_state["day"] != today:
+        usage_state["day"] = today
+        usage_state["used"] = {}
+
+
+def record_model_use(model_name: str, exhausted: bool = False) -> None:
+    """Suma una llamada exitosa; con exhausted=True marca el modelo como agotado (429)."""
+    if not is_quality_model(model_name):
+        return
+    roll_usage_day()
+    used = usage_state["used"]
+    if exhausted:
+        used[model_name] = max(used.get(model_name, 0), FLASH_DAILY_LIMIT)
+    else:
+        used[model_name] = used.get(model_name, 0) + 1
+    save_usage_state()
+
+
+def usage_snapshot() -> dict:
+    roll_usage_day()
+    used = usage_state["used"]
+    models = [
+        {
+            "name": name,
+            "used": used.get(name, 0),
+            "limit": FLASH_DAILY_LIMIT,
+            "remaining": max(FLASH_DAILY_LIMIT - used.get(name, 0), 0),
+        }
+        for name in quality_models()
+    ]
+    tomorrow = datetime.combine(
+        datetime.now(PACIFIC_TZ).date() + timedelta(days=1),
+        datetime.min.time(),
+        tzinfo=PACIFIC_TZ,
+    )
+    return {
+        "day": usage_state["day"],
+        "remaining": sum(m["remaining"] for m in models),
+        "limit": FLASH_DAILY_LIMIT * len(models),
+        "models": models,
+        "resets_at": tomorrow.astimezone(timezone.utc).isoformat(),
+    }
+
+
+load_usage_state()
+
+
 def describe_model_failure(exc: Exception) -> str:
     """Traduce la falla del modelo para no confundir cuota con timeout."""
     name = type(exc).__name__
@@ -1034,6 +1140,7 @@ def generate_with_fallback(
                 # de tirar excepción. Sin esto el None llegaría hasta el parser de JSON.
                 if response.text is None:
                     raise RuntimeError(f"{model_name} no devolvió texto")
+                record_model_use(model_name)
                 if model_name != chain[0]:
                     print(f"MODELO ALTERNATIVO: respondió {model_name}")
                 return response.text
@@ -1041,6 +1148,7 @@ def generate_with_fallback(
                 last_exc = exc
                 if is_quota_error(exc):
                     quota_cooldown[model_name] = time.monotonic() + QUOTA_COOLDOWN_SECONDS
+                    record_model_use(model_name, exhausted=True)
                     break  # no reintentar cuota, pasar al siguiente modelo
                 if is_timeout_error(exc) and attempt < max_attempts - 1:
                     print(f"TIMEOUT en {model_name}, reintentando (intento {attempt + 2})")
@@ -1049,6 +1157,10 @@ def generate_with_fallback(
                 # siguiente de la cadena: se sigue. Uno de la REQUEST (prompt inválido,
                 # API key mala) va a fallar igual en todos, así que aborta.
                 if is_retryable_error(exc) or is_model_unavailable_error(exc):
+                    if is_model_not_found_error(exc):
+                        quota_cooldown[model_name] = (
+                            time.monotonic() + MODEL_UNAVAILABLE_COOLDOWN_SECONDS
+                        )
                     motivo = type(exc).__name__
                     detalle = str(exc).replace("\n", " ")[:160]
                     print(f"FALLO en {model_name} ({motivo}: {detalle}), probando el siguiente")
@@ -1723,6 +1835,12 @@ def reset():
 def health():
     """Para el túnel público y para chequear que el proceso está vivo."""
     return {"ok": True, "name": "riftbound-rules-chatbot"}
+
+
+@app.get("/usage")
+def usage():
+    """Consultas restantes hoy con el modelo principal (estimación)."""
+    return usage_snapshot()
 
 
 @app.get("/config")

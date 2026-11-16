@@ -16,5 +16,6 @@ resp_azir.json
 scrape_test.py
 scrape_test2.py
 server.log
+usage_state.json
 *.pyc
 .DS_Store
