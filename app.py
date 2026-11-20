@@ -234,12 +234,50 @@ if CARDS_FILE.exists():
     print(f"Cargadas {len(CARDS_DB)} cartas desde {CARDS_FILE}")
 
 
+def _norm_name(text: str) -> str:
+    """Minúsculas, sin puntuación ni espacios repetidos: 'Riven, The Exile' == 'riven the exile'."""
+    return " ".join(re.sub(r"[^a-z0-9]+", " ", text.lower()).split())
+
+
+def _same_card_text(a: dict, b: dict) -> bool:
+    """Mismo texto de juego: una alter/overnumber y su versión base."""
+    def sig(c: dict):
+        return (c.get("type", ""), tuple(sorted(c.get("domains", []))),
+                c.get("rules_text", ""), c.get("effect_text", ""))
+    return sig(a) == sig(b)
+
+
 def find_card(card_number: str = "", name: str = "", energy: str = "", might: str = "") -> dict | None:
-    """Busca una carta por número, o por nombre + stats como fallback."""
+    """Busca una carta por número, o por nombre + stats como fallback.
+
+    Una alter/overnumber (ej. RAD-173/167) no está en cards.json: se resuelve por
+    nombre completo (sin puntuación) a la versión base, que tiene el mismo texto.
+    """
     if card_number and card_number in CARDS_BY_NUMBER:
-        return CARDS_BY_NUMBER[card_number]
+        by_number = CARDS_BY_NUMBER[card_number]
+        wanted = _norm_name(name)
+        # Una alter puede traer un número que en la base es de OTRA carta
+        # (SFD-146 = Vex, pero la alter impresa es Spirit Wheel). Si el nombre
+        # leído no coincide con el del número pero sí con una carta exacta,
+        # manda el nombre.
+        if not wanted or _norm_name(by_number.get("name", "")) == wanted:
+            return by_number
+        exact = [c for c in CARDS_DB if _norm_name(c.get("name", "")) == wanted]
+        if not exact:
+            return by_number
+        if len(exact) > 1 and all(_same_card_text(exact[0], c) for c in exact[1:]):
+            exact = [min(exact, key=lambda c: c.get("card_number", ""))]
+        return exact[0] if len(exact) == 1 else by_number
     name_lower = name.lower().strip()
     candidates = CARDS_BY_NAME.get(name_lower, [])
+    if len(candidates) != 1:
+        # Nombre completo normalizado: acepta "Riven The Exile" por "Riven, The Exile".
+        wanted = _norm_name(name)
+        exact = [c for c in CARDS_DB if _norm_name(c.get("name", "")) == wanted] if wanted else []
+        if exact:
+            candidates = exact
+    if len(candidates) > 1 and all(_same_card_text(candidates[0], c) for c in candidates[1:]):
+        candidates = [min(candidates, key=lambda c: c.get("card_number", ""))]
     if len(candidates) == 1:
         return candidates[0]
     if len(candidates) > 1 and (energy or might):
@@ -432,10 +470,18 @@ def disambiguate_by_subtitle(name: str, candidates: list[dict], text_lower: str)
     return matched if len(matched) == 1 else candidates
 
 
-def find_cards_in_text(text: str) -> tuple[list[dict], list[str]]:
-    """Busca nombres o números de cartas mencionadas en el texto. Retorna (cartas, notas de ambigüedad)."""
+def find_cards_in_text(
+    text: str, preferred: list[dict] | None = None
+) -> tuple[list[dict], list[str]]:
+    """Busca nombres o números de cartas mencionadas en el texto. Retorna (cartas, notas de ambigüedad).
+
+    `preferred` son las cartas ya identificadas por foto: si el texto nombra una
+    carta ambigua ("riven") y una candidata está en `preferred`, se entiende que
+    el usuario habla de esa y no se pregunta.
+    """
     found = []
-    seen_numbers = set()
+    seen_numbers = {c["card_number"] for c in (preferred or []) if c.get("card_number")}
+    preferred_numbers = set(seen_numbers)
     ambiguities = []
 
     # 1. Buscar por número de carta (ej: SFD-185, OGN-006)
@@ -473,6 +519,10 @@ def find_cards_in_text(text: str) -> tuple[list[dict], list[str]]:
                     candidates = filtered
             if len(candidates) > 1:
                 candidates = disambiguate_by_subtitle(name, candidates, text_lower)
+            if len(candidates) > 1 and preferred_numbers:
+                from_photo = [c for c in candidates if c["card_number"] in preferred_numbers]
+                if from_photo:
+                    candidates = from_photo
             new_candidates = [c for c in candidates if c["card_number"] not in seen_numbers]
             # Deduplicar overnumbers/alt-arts: si múltiples candidatos tienen mismo tipo/dominios/texto,
             # conservar el de menor número de carta (versión regular sobre overnumber)
@@ -1473,7 +1523,7 @@ async def ask(
                     image_cards.append(CARDS_BY_NUMBER[number_match.group(1)])
 
     # 2. Buscar cartas mencionadas por nombre en la query
-    mentioned_cards, ambiguities = find_cards_in_text(query)
+    mentioned_cards, ambiguities = find_cards_in_text(query, preferred=image_cards)
     for card in mentioned_cards:
         card_texts.append(format_card_info(card))
 
@@ -1670,7 +1720,7 @@ async def ask_stream(
                     image_cards.append(CARDS_BY_NUMBER[number_match.group(1)])
 
         # 2. Buscar cartas mencionadas
-        mentioned_cards, ambiguities = find_cards_in_text(query)
+        mentioned_cards, ambiguities = find_cards_in_text(query, preferred=image_cards)
         for card in mentioned_cards:
             card_texts.append(format_card_info(card))
 
