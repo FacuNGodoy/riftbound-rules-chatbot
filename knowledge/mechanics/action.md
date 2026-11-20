@@ -19,7 +19,7 @@ confidence: "curated"
 - [[rules/806 Action|Regla 806.1]]
 - [[rules/806 Action|Regla 806.2]]
 
-## Cartas (105)
+## Cartas (104)
 
 - [[cards/OGN-004|Cleave (OGN-004)]]
 - [[cards/OGN-005|Disintegrate (OGN-005)]]
@@ -79,7 +79,6 @@ confidence: "curated"
 - [[cards/RAD-121|One-Two Punch (RAD-121)]]
 - [[cards/RAD-142|Hexplosive Minefield (RAD-142)]]
 - [[cards/RAD-148|Ntofo Strikes (RAD-148)]]
-- [[cards/RAD-180|Ezreal, Dashing (RAD-180)]]
 - [[cards/SFD-003|Blood Rush (SFD-003)]]
 - [[cards/SFD-017|Sudden Storm (SFD-017)]]
 - [[cards/SFD-040|Thwonk! (SFD-040)]]
@@ -101,4 +100,5 @@ confidence: "curated"
 - [[cards/SFD-200|Arcane Shift (SFD-200)]]
 - [[cards/UNL-007|Smite (UNL-007)]]
 - [[cards/UNL-010|Vault Breaker (UNL-010)]]
-- …y 25 cartas más en el grafo exportado.
+- [[cards/UNL-014|Monster Harpoon (UNL-014)]]
+- …y 24 cartas más en el grafo exportado.

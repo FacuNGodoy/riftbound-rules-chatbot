@@ -16,11 +16,11 @@ confidence: "curated"
 
 ## Reglas
 
-- [[rules/417 Deal|Regla 417.1]]
-- [[rules/417 Deal|Regla 417.2]]
-- [[rules/140 Units|Regla 143.2.a]]
+- [[rules/418 Heal|Regla 418.1]]
+- [[rules/418 Heal|Regla 418.2]]
+- [[rules/140 Units|Regla 143.2.b]]
 
-## Cartas (185)
+## Cartas (182)
 
 - [[cards/OGN-005|Disintegrate (OGN-005)]]
 - [[cards/OGN-008|Get Excited! (OGN-008)]]
@@ -99,7 +99,7 @@ confidence: "curated"
 - [[cards/RAD-079|Avalanche (RAD-079)]]
 - [[cards/RAD-082|Primordial Roar (RAD-082)]]
 - [[cards/RAD-085|Graves, Blasting Through (RAD-085)]]
+- [[cards/RAD-094|Explosimian (RAD-094)]]
 - [[cards/RAD-096|Satchel Charge (RAD-096)]]
-- [[cards/RAD-112|Ziggs, Explosive (RAD-112)]]
-- [[cards/RAD-121|One-Two Punch (RAD-121)]]
-- …y 105 cartas más en el grafo exportado.
+- [[cards/RAD-104|Pitiless Stalker (RAD-104)]]
+- …y 102 cartas más en el grafo exportado.

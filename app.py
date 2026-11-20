@@ -163,20 +163,19 @@ Targets y elecciones (regla 355.5 a 355.12, 337):
   Ejemplo clave: "Each player kills one of their units" (Cull the Weak) NO targetea las unidades, porque es un conjunto elegido en parte por otros jugadores (355.10.e). Cada jugador elige su unidad AL RESOLVER. Por eso podés jugarla incluso sin tener unidades propias: vos simplemente no matás nada y el rival sí. Tampoco targetea a los jugadores, porque "each player" es selección programática sin elección posible (355.10.d).
 - Regla práctica para distinguir: si el efecto lo elegís VOS y son objetos específicos → target → hace falta objetivo válido para jugarla. Si lo elige cada jugador, o dice "must", o es "all X" → no target → se elige al resolver y la carta es jugable igual.
 
-Reglas de atacante/defensor (regla 464):
+Reglas de atacante/defensor (regla 466):
 - El atacante es el jugador cuyas unidades aplicaron contested status al battlefield (se movieron ahí). El atacante NO controla ese battlefield.
 - El defensor es el jugador que ya controlaba el battlefield. El defensor SÍ controla ese battlefield.
 - Por lo tanto: si estás atacando, NO podés jugar unidades al battlefield en disputa (no lo controlás). Si estás defendiendo, SÍ podés.
 - Esto aplica a CUALQUIER efecto que juegue una unidad (desde mano, descarte, etc): si no tenés ubicación válida, no podés jugarla ahí.
 
-Orden de Combat Cleanup (reglas 465-466, 320, 323):
-1. Se asigna y se inflige daño de combate simultáneamente (465.2). Asignar NO es infligir (465.2.c.1).
-2. Se salta FEPR, se va directo al Resolution Step (465.3).
-3. Se invoca Combat Special Cleanup (466.1):
-   - 3a. Unidades con lethal damage que tienen Deathknell u otras triggered abilities por muerte propia: el trigger se AGREGA como Pending Item al Chain (323.4). La unidad aún no fue al trash.
-   - 3b. Esas unidades con lethal damage mueren y van al trash (323.5).
-   - 3c. Se CURAN TODAS las unidades sobrevivientes (466.1.a.1). Todo el daño marcado se remueve.
-   - 3d. Se recallan atacantes si quedan defensores (466.1.a.2).
+Orden de Combat Cleanup (reglas 467-468, 320, 323):
+1. Se asigna y se inflige daño de combate simultáneamente (467.2). Asignar NO es infligir (467.2.c.1).
+2. Se salta FEPR, se va directo al Resolution Step (467.3).
+3. Se invoca Combat Special Cleanup (468.1):
+   - 3a. Las unidades con lethal damage mueren y van al trash (323.4). Las que tienen Deathknell u otras triggered abilities por muerte propia AGREGAN el trigger como Pending Item al Chain justo ANTES de moverse al trash (808.1.d.2).
+   - 3c. Se CURAN TODAS las unidades sobrevivientes (468.1.a.1). Todo el daño marcado se remueve.
+   - 3d. Se recallan atacantes si quedan defensores (468.1.a.2).
    - REGLA CRÍTICA (320): Mientras un Cleanup está ocurriendo, los Chain Items NO pueden finalizarse ni resolverse. Solo se pueden agregar nuevos Pending Items (320.1).
 4. Recién cuando TERMINA el Cleanup, los Pending Items (como Deathknell) se finalizan y resuelven.
 - CONCLUSIÓN: Deathknell TRIGGEREA antes del heal (paso 3a), pero se RESUELVE después del heal (paso 4). Las unidades sobrevivientes ya están curadas cuando el Deathknell hace su efecto.
@@ -186,8 +185,8 @@ Orden de Combat Cleanup (reglas 465-466, 320, 323):
 Ejemplo concreto de Deathknell + Combat Cleanup:
 - Unidad A (con Deathknell "Deal 4 to an enemy unit") recibe lethal damage en combate.
 - Unidad B sobrevive el combate con 3 de daño marcado sobre 5 Might.
-- Combat Cleanup paso 3a: Deathknell de A TRIGGEREA y queda como Pending Item.
-- Combat Cleanup paso 3b: A muere y va al trash.
+- Combat Cleanup paso 3a: Deathknell de A TRIGGEREA y queda como Pending Item justo antes de que A vaya al trash (808.1.d.2).
+- Combat Cleanup paso 3a (a continuación): A muere y va al trash.
 - Combat Cleanup paso 3c: Se CURAN TODAS las unidades. B pasa de 3 daño a 0 daño.
 - Termina el Cleanup. Regla 320 deja de bloquear resoluciones.
 - Ahora se resuelve el Deathknell de A: B recibe 4 de daño. Como B tiene 5 Might y 0 daño previo (fue curada), B queda con 4 daño → B SOBREVIVE.
@@ -216,6 +215,10 @@ if CARDS_FILE.exists():
     for card in CARDS_DB:
         if card.get("card_number"):
             CARDS_BY_NUMBER[card["card_number"]] = card
+        # Las alters/overnumbered solo se resuelven por número (foto): indexarlas
+        # por nombre o tag reintroduce ambigüedades con la carta base.
+        if card.get("variant", "standard") != "standard":
+            continue
         name_lower = card.get("name", "").lower()
         CARDS_BY_NAME.setdefault(name_lower, []).append(card)
         # Indexar por tags (ej: "Draven", "Noxus")
@@ -262,7 +265,8 @@ def find_card(card_number: str = "", name: str = "", energy: str = "", might: st
         # manda el nombre.
         if not wanted or _norm_name(by_number.get("name", "")) == wanted:
             return by_number
-        exact = [c for c in CARDS_DB if _norm_name(c.get("name", "")) == wanted]
+        exact = [c for c in CARDS_DB if c.get("variant", "standard") == "standard"
+                 and _norm_name(c.get("name", "")) == wanted]
         if not exact:
             return by_number
         if len(exact) > 1 and all(_same_card_text(exact[0], c) for c in exact[1:]):
@@ -273,7 +277,8 @@ def find_card(card_number: str = "", name: str = "", energy: str = "", might: st
     if len(candidates) != 1:
         # Nombre completo normalizado: acepta "Riven The Exile" por "Riven, The Exile".
         wanted = _norm_name(name)
-        exact = [c for c in CARDS_DB if _norm_name(c.get("name", "")) == wanted] if wanted else []
+        exact = [c for c in CARDS_DB if c.get("variant", "standard") == "standard"
+                 and _norm_name(c.get("name", "")) == wanted] if wanted else []
         if exact:
             candidates = exact
     if len(candidates) > 1 and all(_same_card_text(candidates[0], c) for c in candidates[1:]):
@@ -427,9 +432,14 @@ def identify_card_from_image(
     card_number = ""
     card_name = ""
     energy = ""
-    m = re.search(r'NUMBER:\s*([A-Z]+)-(\d+)', vision_text, re.IGNORECASE)
+    m = re.search(r'NUMBER:\s*([A-Z]+)-([A-Z]?)(\d+)([ab]?)(\*?)', vision_text, re.IGNORECASE)
     if m:
-        card_number = f"{m.group(1).upper()}-{int(m.group(2)):03d}"
+        # Tokens y runas llevan letra (T01, R01): dos dígitos. El resto, tres.
+        digits = f"{int(m.group(3)):02d}" if m.group(2) else f"{int(m.group(3)):03d}"
+        card_number = (
+            f"{m.group(1).upper()}-{m.group(2).upper()}{digits}"
+            f"{m.group(4).lower()}{m.group(5)}"
+        )
     m = re.search(r'NAME:\s*(.+)', vision_text, re.IGNORECASE)
     if m and m.group(1).strip().upper() != "UNKNOWN":
         card_name = m.group(1).strip()
@@ -485,8 +495,12 @@ def find_cards_in_text(
     ambiguities = []
 
     # 1. Buscar por número de carta (ej: SFD-185, OGN-006)
-    for m in re.finditer(r'(OGS|OGN|SFD|UNL|VEN|RAD)-(\d{1,3})', text, re.IGNORECASE):
-        card_id = f"{m.group(1).upper()}-{int(m.group(2)):03d}"
+    for m in re.finditer(r'(OGS|OGN|SFD|UNL|VEN|RAD)-([RT]?)(\d{1,3})([ab]?)(\*?)', text, re.IGNORECASE):
+        digits = f"{int(m.group(3)):02d}" if m.group(2) else f"{int(m.group(3)):03d}"
+        card_id = (
+            f"{m.group(1).upper()}-{m.group(2).upper()}{digits}"
+            f"{m.group(4).lower()}{m.group(5)}"
+        )
         if card_id in CARDS_BY_NUMBER and card_id not in seen_numbers:
             found.append(CARDS_BY_NUMBER[card_id])
             seen_numbers.add(card_id)
@@ -529,7 +543,7 @@ def find_cards_in_text(
             def _card_sig(c):
                 return (c.get("type", ""), tuple(sorted(c.get("domains", []))), c.get("rules_text", ""), c.get("effect_text", ""))
             def _num(card):
-                try: return int(card["card_number"].split("-")[1])
+                try: return int(re.match(r"\d+", card["card_number"].split("-")[1]).group())
                 except: return 9999
             seen_sigs: dict = {}
             for c in new_candidates:
@@ -590,19 +604,37 @@ ATTACHMENT_TRIGGERS = [
     "quick-draw", "quickdraw", "weaponmaster", "might bonus", "effect text",
 ]
 
+# Temas que el grafo no modela (no tienen mecánica ni relaciones propias).
+# Si la pregunta los toca, el grafo no contesta solo: responde el RAG con
+# verificador, que sí trae las reglas de Hidden, descarte y ubicación de juego.
+GRAPH_OUT_OF_SCOPE_HINTS = (
+    "hidden", "hide", "oculta", "esconde", "boca abajo", "facedown",
+    "descart", "discard",
+    "atacante", "defensor", "attacker", "defender", "showdown",
+)
+
+
+def graph_out_of_scope(query: str) -> bool:
+    q = query.lower().replace(HIDDEN_BLADE_CARD_NAME.lower(), " ")
+    skip = any(hint in q for hint in GRAPH_OUT_OF_SCOPE_HINTS)
+    if skip:
+        print("GRAPH: fuera de alcance, va al RAG")
+    return skip
+
+
 KEYWORD_ENRICHMENT = {
-    "jugar|juega|play|plays|jugarlo|jugarla|invocar": "play unit valid location battlefield base when a player plays a spell trigger after resolution 419.4",
+    "jugar|juega|play|plays|jugarlo|jugarla|invocar": "play unit valid location battlefield base when a player plays a spell trigger after resolution 420.4",
     "atacar|attack|atacando|attacker": "attacker contested status control battlefield",
     "defender|defend|defendiendo|defensor": "defender control battlefield",
     "descart|discard": "discard play unit valid location",
-    "hide|hidden|esconder|facedown": "hide hidden facedown battlefield keyword 421 811",
+    "hide|hidden|esconder|facedown": "hide hidden facedown battlefield keyword 422 811",
     "stun|stunear|stunned": "stun stunned combat damage unit",
     "exhaust|tap|exhausted": "exhaust exhausted ready tap",
     "equip|equipment|gear|attach|atach": "equip equipment gear attach attached top-most card inactive rules text effect text appended might bonus 135.4 136.2 137.3",
     "reaction|reaccion": "reaction play respond chain",
-    "combat|combate|pelea": "combat damage showdown attacker defender cleanup resolution heal 465 466",
+    "combat|combate|pelea": "combat damage showdown attacker defender cleanup resolution heal 467 468",
     "deathknell|deathkneel|knell": "deathknell when I die pending item cleanup 323.4 808 320 cannot be finalized resolved heal all units",
-    "cleanup|curan|curacion|se curan": "combat cleanup heal all units 466.1 320 323 lethal damage",
+    "cleanup|curan|curacion|se curan": "combat cleanup heal all units 468.1 320 323 lethal damage",
     "move|mover|movimiento": "move unit battlefield base location",
     "kill|matar|morir|muere|muerte": "kill die destroy unit combat damage lethal",
     "buff|bonus|might": "might bonus buff increase unit",
@@ -628,9 +660,9 @@ MECHANIC_QUERIES = [
             "juega el spell", "juega un spell", "plays a spell",
         ],
         "queries": [
-            "Abilities trigger when cards are played after resolution 419.4",
-            "trigger when the act of playing the card has been completed by resolution 419.4.a",
-            "countered card play trigger will not trigger 419.4.a.1",
+            "Abilities trigger when cards are played after resolution 420.4",
+            "trigger when the act of playing the card has been completed by resolution 420.4.a",
+            "countered card play trigger will not trigger 420.4.a.1",
         ],
     },
     {
@@ -639,13 +671,13 @@ MECHANIC_QUERIES = [
             "Deathknell When I die Pending Item before the card is moved to the trash 808",
             "323.4 Units with Lethal Damage Deathknell trigger add Pending Item",
             "While a Cleanup is occurring Chain Items cannot be Finalized or Resolved 320",
-            "Combat Special Cleanup insert Heal all Units 466.1 Skip the FEPR process 465.3",
+            "Combat Special Cleanup insert Heal all Units 468.1 Skip the FEPR process 467.3",
         ],
     },
     {
         "match": ["cleanup", "se curan", "curacion", "curan las", "heal all"],
         "queries": [
-            "Combat Special Cleanup Heal all Units 466.1",
+            "Combat Special Cleanup Heal all Units 468.1",
             "While a Cleanup is occurring Chain Items cannot be Finalized or Resolved 320",
         ],
     },
@@ -687,19 +719,21 @@ MECHANIC_QUERIES = [
 
 # Marcadores de reglas que el embedding suele perder. Se inyectan por texto exacto.
 CRITICAL_RULE_MARKERS = {
-    "**419.4.a.**": [
+    "**420.4.a.**": [
         "cuando juega", "cuando un jugador juega", "when a player plays",
         "juega el spell", "juega un spell", "plays a spell",
         "abandoned hall",
     ],
-    "**419.4.a.1.**": [
+    "**420.4.a.1.**": [
         "cuando juega", "when a player plays", "counter", "countere",
         "abandoned hall",
     ],
     "**320.**": ["deathknell", "deathkneel", "knell", "cleanup", "curan", "curacion"],
     "**323.4.**": ["deathknell", "deathkneel", "knell", "cleanup", "lethal", "muere", "muerte", "curan"],
-    "**465.3.**": ["deathknell", "deathkneel", "knell", "combat", "combate", "cleanup", "curan"],
-    "**466.1.a.1.**": ["deathknell", "deathkneel", "knell", "curan", "cleanup", "heal", "curacion"],
+    "**467.3.**": ["deathknell", "deathkneel", "knell", "combat", "combate", "cleanup", "curan"],
+    "**468.1.a.1.**": ["deathknell", "deathkneel", "knell", "curan", "cleanup", "heal", "curacion"],
+    "**466.2.c.1.**": ["atacante", "defensor", "attacker", "defender",
+                       "showdown", "contested", "disputa"],
     "**808.1.**": ["deathknell", "deathkneel", "knell"],
     "**359.3.e.14.**": ["zhonya", "zhonyas", "hourglass", HIDDEN_BLADE_CARD_NAME, "linked"],
     "**055.**": TARGETING_TRIGGERS,
@@ -747,8 +781,8 @@ Durante el Combat Cleanup la chain NO se puede resolver (regla 320). El heal de 
 
 En el caso típico (Rex Deathknell Deal 4 vs una unidad que sobrevivió combate con daño marcado, p.ej. Master Yi 5 Might con 3 de daño):
 1. Daño de combate. Rex lethal. Yi sobrevive dañado.
-2. Cleanup 3a: Deathknell de Rex queda Pending. No se resuelve.
-3. Cleanup 3b: Rex muere.
+2. Cleanup 3a: Deathknell de Rex queda Pending (808.1.d.2). No se resuelve.
+3. Cleanup 3a (a continuación): Rex muere.
 4. Cleanup 3c: Yi se CURA a 0 daño.
 5. Termina el Cleanup.
 6. Se resuelve Deathknell: 4 daño a Yi ya curado → 4/5 → SOBREVIVE.
@@ -1390,7 +1424,7 @@ def deterministic_ruling(query: str) -> dict | None:
             "confidence": "ALTA",
             "explanation": (
                 "En Combat Cleanup, Deathknell triggerea antes del heal pero se resuelve "
-                "después. En 3a queda como Pending Item; en 3b mueren las unidades con lethal; "
+                "después. Queda como Pending Item justo antes de que la unidad vaya al trash (808.1.d.2); en 3a mueren las unidades con lethal; "
                 "en 3c se curan las sobrevivientes. Durante el Cleanup la chain no puede "
                 "finalizarse ni resolverse, así que el efecto de Deathknell espera hasta que "
                 "termine el Cleanup.\n\n"
@@ -1399,7 +1433,7 @@ def deterministic_ruling(query: str) -> dict | None:
                 "Deathknell por sí solo alcanza o supera su Might. El daño que había recibido "
                 "en el combate NO se suma."
             ),
-            "citations": ["320", "323.4", "466.1.a.1", "808.1"],
+            "citations": ["320", "323.4", "468.1.a.1", "808.1", "808.1.d.2"],
             "missing_info": "",
         }
     return None
@@ -1426,7 +1460,7 @@ def finalize_ruling(
         requested_ids = []
     valid_ids = []
     for item_id in requested_ids:
-        # Los modelos a veces copian el formato visual de la evidencia ("[419.4.a]")
+        # Los modelos a veces copian el formato visual de la evidencia ("[420.4.a]")
         # o anteponen "Regla". Ambos representan el mismo ID exacto.
         normalized = str(item_id).strip().strip("[]` ").replace("Regla ", "").strip()
         if normalized in evidence and normalized not in valid_ids:
@@ -1518,7 +1552,7 @@ async def ask(
             )
             if card_text:
                 card_texts.append(card_text)
-                number_match = re.search(r"Número:\s*([A-Z]+-\d+)", card_text)
+                number_match = re.search(r"Número:\s*([A-Z]+-[A-Z]?\d+[ab]?\*?)", card_text)
                 if number_match and number_match.group(1) in CARDS_BY_NUMBER:
                     image_cards.append(CARDS_BY_NUMBER[number_match.group(1)])
 
@@ -1582,7 +1616,7 @@ async def ask(
         review = deterministic_ruling(query)
         route = "deterministic" if review is not None else "rag"
         ruling = None
-        if review is None and graph_resolution:
+        if review is None and graph_resolution and not graph_out_of_scope(query):
             try:
                 graph_review = generate_graph_review(query, graph_resolution)
                 if graph_review is not None:
@@ -1715,7 +1749,7 @@ async def ask_stream(
             card_text = identify_card_from_image(img_bytes, mime_type)
             if card_text:
                 card_texts.append(card_text)
-                number_match = re.search(r"Número:\s*([A-Z]+-\d+)", card_text)
+                number_match = re.search(r"Número:\s*([A-Z]+-[A-Z]?\d+[ab]?\*?)", card_text)
                 if number_match and number_match.group(1) in CARDS_BY_NUMBER:
                     image_cards.append(CARDS_BY_NUMBER[number_match.group(1)])
 
@@ -1771,7 +1805,7 @@ async def ask_stream(
             review = deterministic_ruling(query)
             route = "deterministic" if review is not None else "rag"
             ruling = None
-            if review is None and graph_resolution:
+            if review is None and graph_resolution and not graph_out_of_scope(query):
                 try:
                     yield sse("status", "graph")
                     graph_review = generate_graph_review(query, graph_resolution)

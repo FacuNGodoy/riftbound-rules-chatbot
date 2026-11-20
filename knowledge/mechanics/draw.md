@@ -16,10 +16,10 @@ confidence: "curated"
 
 ## Reglas
 
-- Regla `413.1` (no encontrada)
-- Regla `413.2` (no encontrada)
+- [[rules/414 Exhaust|Regla 414.1]]
+- [[rules/414 Exhaust|Regla 414.2]]
 
-## Cartas (160)
+## Cartas (159)
 
 - [[cards/OGN-005|Disintegrate (OGN-005)]]
 - [[cards/OGN-020|Scrapyard Champion (OGN-020)]]
@@ -91,7 +91,6 @@ confidence: "curated"
 - [[cards/RAD-152|Encore (RAD-152)]]
 - [[cards/RAD-153|Evelynn, Agony's Embrace (RAD-153)]]
 - [[cards/RAD-158|Black Market (RAD-158)]]
-- [[cards/RAD-175|Evelynn, Agony's Embrace (RAD-175)]]
 - [[cards/SFD-005|Detonate (SFD-005)]]
 - [[cards/SFD-011|Angle Shot (SFD-011)]]
 - [[cards/SFD-022|Long Sword (SFD-022)]]
@@ -101,4 +100,5 @@ confidence: "curated"
 - [[cards/SFD-046|Poro Snax (SFD-046)]]
 - [[cards/SFD-048|Stellacorn Herder (SFD-048)]]
 - [[cards/SFD-054|Jax, Unmatched (SFD-054)]]
-- …y 80 cartas más en el grafo exportado.
+- [[cards/SFD-056|Sterak's Gage (SFD-056)]]
+- …y 79 cartas más en el grafo exportado.

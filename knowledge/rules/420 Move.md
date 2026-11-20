@@ -89,4 +89,6 @@ to the next card the play game action, discretionary or limited, is performed on
 
 ## Mecánicas relacionadas
 
-- [[mechanics/move|Move]]
+- [[mechanics/play|Play]]
+- [[mechanics/play-trigger|Triggers al jugar]]
+- [[mechanics/counter|Counter]]

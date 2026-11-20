@@ -17,11 +17,11 @@ confidence: "curated"
 
 ## Reglas
 
-- [[rules/420 Move|Regla 420.1]]
-- [[rules/446 Copy|Regla 446.1]]
+- [[rules/446 Copy|Regla 448.1]]
+- [[rules/446 Copy|Regla 451.1]]
 - [[rules/353 The Process of Play|Regla 355.4]]
 
-## Cartas (155)
+## Cartas (152)
 
 - [[cards/OGN-019|Raging Soul (OGN-019)]]
 - [[cards/OGN-023|Unlicensed Armory (OGN-023)]]
@@ -66,6 +66,7 @@ confidence: "curated"
 - [[cards/RAD-031|Stoic Ferryman (RAD-031)]]
 - [[cards/RAD-033|Command: Attack (RAD-033)]]
 - [[cards/RAD-034|Hunker Down (RAD-034)]]
+- [[cards/RAD-044|Hunting Blind (RAD-044)]]
 - [[cards/RAD-061|Ekko, Ingenious (RAD-061)]]
 - [[cards/RAD-062|Gravity Field (RAD-062)]]
 - [[cards/RAD-074|Raving Witness (RAD-074)]]
@@ -82,9 +83,6 @@ confidence: "curated"
 - [[cards/RAD-146|The Ball (RAD-146)]]
 - [[cards/RAD-150|Blade of the Exile (RAD-150)]]
 - [[cards/RAD-155|Jarvan IV, Exemplar of Demacia (RAD-155)]]
-- [[cards/RAD-176|Jarvan IV, Exemplar of Demacia (RAD-176)]]
-- [[cards/RAD-180|Ezreal, Dashing (RAD-180)]]
-- [[cards/RAD-182|Kayn, Unleashed (RAD-182)]]
 - [[cards/SFD-007|Gem Jammer (SFD-007)]]
 - [[cards/SFD-014|Minotaur Reckoner (SFD-014)]]
 - [[cards/SFD-038|Ribbon Dancer (SFD-038)]]
@@ -103,4 +101,6 @@ confidence: "curated"
 - [[cards/SFD-125|Fae Porter (SFD-125)]]
 - [[cards/SFD-126|Loyal Pup (SFD-126)]]
 - [[cards/SFD-128|Overzealous Fan (SFD-128)]]
-- …y 75 cartas más en el grafo exportado.
+- [[cards/SFD-129|Temptation (SFD-129)]]
+- [[cards/SFD-130|Treasure Hunter (SFD-130)]]
+- …y 72 cartas más en el grafo exportado.

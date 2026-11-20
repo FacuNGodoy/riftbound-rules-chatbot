@@ -75,7 +75,11 @@ def edge(
 
 
 def build_graph() -> dict[str, Any]:
-    cards = json.loads(CARDS_FILE.read_text(encoding="utf-8"))
+    # Solo cartas estándar: las alters/overnumbered repiten el texto de la base.
+    cards = [
+        c for c in json.loads(CARDS_FILE.read_text(encoding="utf-8"))
+        if c.get("variant", "standard") == "standard"
+    ]
     catalog = json.loads(CATALOG_FILE.read_text(encoding="utf-8"))
     rules_text = RULES_FILE.read_text(encoding="utf-8")
     sections = parse_rule_sections(rules_text)
@@ -252,7 +256,10 @@ def validate_graph(graph: dict[str, Any]) -> dict[str, Any]:
     counts: dict[str, int] = {}
     for node in graph["nodes"]:
         counts[node["kind"]] = counts.get(node["kind"], 0) + 1
-    expected_cards = len(json.loads(CARDS_FILE.read_text(encoding="utf-8")))
+    expected_cards = sum(
+        1 for c in json.loads(CARDS_FILE.read_text(encoding="utf-8"))
+        if c.get("variant", "standard") == "standard"
+    )
     if counts.get("card") != expected_cards:
         errors.append(
             f"Se esperaban {expected_cards} cartas (las de cards.json) "

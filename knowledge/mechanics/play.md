@@ -17,11 +17,11 @@ confidence: "curated"
 
 ## Reglas
 
-- [[rules/419 Play|Regla 419.1]]
-- Regla `419.4.a` (no encontrada)
+- [[rules/420 Move|Regla 420.1]]
+- [[rules/420 Move|Regla 420.4.a]]
 - [[rules/340 Step 4 - Resolve|Regla 340.1]]
 
-## Cartas (582)
+## Cartas (578)
 
 - [[cards/OGN-002|Brazen Buccaneer (OGN-002)]]
 - [[cards/OGN-003|Chemtech Enforcer (OGN-003)]]
@@ -103,4 +103,4 @@ confidence: "curated"
 - [[cards/OGN-147|Wildclaw Shaman (OGN-147)]]
 - [[cards/OGN-149|Carnivorous Snapvine (OGN-149)]]
 - [[cards/OGN-150|Kraken Hunter (OGN-150)]]
-- …y 502 cartas más en el grafo exportado.
+- …y 498 cartas más en el grafo exportado.

@@ -17,11 +17,11 @@ confidence: "curated"
 
 ## Reglas
 
-- [[rules/428 Kill|Regla 428.1]]
-- [[rules/428 Kill|Regla 428.2]]
-- [[rules/140 Units|Regla 143.2.a]]
+- [[rules/429 Add|Regla 429.1]]
+- [[rules/429 Add|Regla 429.2]]
+- [[rules/140 Units|Regla 143.2.b]]
 
-## Cartas (175)
+## Cartas (176)
 
 - [[cards/OGN-005|Disintegrate (OGN-005)]]
 - [[cards/OGN-022|Thermo Beam (OGN-022)]]
@@ -76,15 +76,18 @@ confidence: "curated"
 - [[cards/RAD-014|Shimmering Swimmer (RAD-014)]]
 - [[cards/RAD-017|Detonation Amplifier (RAD-017)]]
 - [[cards/RAD-020|Mordekaiser, Twice Slain (RAD-020)]]
+- [[cards/RAD-022|Whirling Twirligig (RAD-022)]]
 - [[cards/RAD-024|Blossoming Dreamroot (RAD-024)]]
 - [[cards/RAD-036|Storm Raptor (RAD-036)]]
 - [[cards/RAD-039|Ephemeral Ward (RAD-039)]]
+- [[cards/RAD-044|Hunting Blind (RAD-044)]]
 - [[cards/RAD-052|Resource Extractor (RAD-052)]]
 - [[cards/RAD-062|Gravity Field (RAD-062)]]
 - [[cards/RAD-069|Zero Point Inflection (RAD-069)]]
 - [[cards/RAD-073|Pillaged Armory (RAD-073)]]
 - [[cards/RAD-083|Stalwart Goatherd (RAD-083)]]
 - [[cards/RAD-087|Portable Portal (RAD-087)]]
+- [[cards/RAD-094|Explosimian (RAD-094)]]
 - [[cards/RAD-095|Momentary Companion (RAD-095)]]
 - [[cards/RAD-096|Satchel Charge (RAD-096)]]
 - [[cards/RAD-100|The Waters' Wage (RAD-100)]]
@@ -100,7 +103,4 @@ confidence: "curated"
 - [[cards/RAD-131|Demacian Illuminators (RAD-131)]]
 - [[cards/RAD-136|Dockside Lock-Up (RAD-136)]]
 - [[cards/RAD-137|Mordekaiser, Dominating (RAD-137)]]
-- [[cards/RAD-139|Ekko, Boy Who Shattered Time (RAD-139)]]
-- [[cards/RAD-141|Ziggs, Hexplosives Expert (RAD-141)]]
-- [[cards/RAD-142|Hexplosive Minefield (RAD-142)]]
-- …y 95 cartas más en el grafo exportado.
+- …y 96 cartas más en el grafo exportado.

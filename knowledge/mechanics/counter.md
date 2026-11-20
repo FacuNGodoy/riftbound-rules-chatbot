@@ -17,9 +17,9 @@ confidence: "curated"
 
 ## Reglas
 
-- [[rules/425 Counter|Regla 425.1]]
-- [[rules/425 Counter|Regla 425.2]]
-- Regla `419.4.a.1` (no encontrada)
+- [[rules/426 Buff|Regla 426.1]]
+- [[rules/426 Buff|Regla 426.2]]
+- [[rules/420 Move|Regla 420.4.a.1]]
 
 ## Cartas (15)
 

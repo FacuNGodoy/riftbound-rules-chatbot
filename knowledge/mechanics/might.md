@@ -18,11 +18,11 @@ confidence: "curated"
 ## Reglas
 
 - [[rules/140 Units|Regla 143.2]]
-- [[rules/140 Units|Regla 143.2.a]]
+- [[rules/140 Units|Regla 143.2.b]]
 - [[rules/137 Might Bonus|Regla 137.3]]
-- Regla `476.1` (no encontrada)
+- [[rules/473 Layers|Regla 478]]
 
-## Cartas (440)
+## Cartas (437)
 
 - [[cards/OGN-003|Chemtech Enforcer (OGN-003)]]
 - [[cards/OGN-004|Cleave (OGN-004)]]
@@ -104,4 +104,4 @@ confidence: "curated"
 - [[cards/OGN-238|Leona, Determined (OGN-238)]]
 - [[cards/OGN-239|Machine Evangel (OGN-239)]]
 - [[cards/OGN-240|Sett, Kingpin (OGN-240)]]
-- …y 360 cartas más en el grafo exportado.
+- …y 357 cartas más en el grafo exportado.

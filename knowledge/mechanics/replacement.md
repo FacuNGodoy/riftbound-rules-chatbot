@@ -19,7 +19,7 @@ confidence: "curated"
 
 - [[rules/367 Replacement Effects|Regla 368.1]]
 - [[rules/367 Replacement Effects|Regla 369.1]]
-- [[rules/438 Replace|Regla 438.1]]
+- [[rules/439 Create|Regla 439.1]]
 - [[rules/353 The Process of Play|Regla 359.3.e.14]]
 
 ## Cartas (46)

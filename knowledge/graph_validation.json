@@ -4,7 +4,7 @@
   "warnings": [],
   "stats": {
     "nodes": 3541,
-    "edges": 3822,
+    "edges": 3823,
     "node_kinds": {
       "card": 1127,
       "event": 6,
@@ -24,7 +24,7 @@
       "RESOLVES_BEFORE": 0,
       "TARGETS": 0,
       "TRIGGERS_AFTER": 1,
-      "USES_MECHANIC": 3748
+      "USES_MECHANIC": 3749
     }
   }
 }

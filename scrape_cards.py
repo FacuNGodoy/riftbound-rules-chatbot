@@ -1,28 +1,58 @@
 """
 Scraper de cartas de Riftbound desde piltoverarchive.com
 Usa Playwright para navegar la página y extraer datos de cada carta.
-Guarda progreso en cards.json después de cada página.
+
+Trae TODAS las variantes, set por set:
+  - standard      : número normal dentro del set (RAD-043)
+  - alt           : mismo número con sufijo a/b (RAD-043a)
+  - overnumbered  : número mayor al tamaño del set (RAD-173 en un set de 167)
+  - signed        : overnumbered firmada (OGN-302*)
+
+Seguridad:
+  - Hace backup de cards.json antes de empezar (cards_backup_pre_all_variants.json).
+  - El progreso va a cards_all_partial.json (se puede reanudar).
+  - cards.json solo se reemplaza al final y solo si no se pierde ninguna carta
+    que ya estaba. Si no, el resultado queda en cards_all_variants.json.
 """
 
 import json
+import math
 import re
+import shutil
 import time
 from pathlib import Path
 from playwright.sync_api import sync_playwright, TimeoutError as PWTimeout
 
-OUTPUT_FILE = Path(__file__).resolve().parent / "cards.json"
-BASE_URL = "https://piltoverarchive.com/cards?sets=RAD&variants=standard"
-TOTAL_PAGES = 6
-SCRAPE_SET_NAME = "Radiance"   # las cartas de este set se vuelven a scrapear desde cero
-EXPECTED_FILTER_COUNT = 168    # lo que muestra el sitio con Set=RAD + Variant=Standard
+ROOT = Path(__file__).resolve().parent
+OUTPUT_FILE = ROOT / "cards.json"
+BACKUP_FILE = ROOT / "cards_backup_pre_all_variants.json"
+PARTIAL_FILE = ROOT / "cards_all_partial.json"
+RESULT_FILE = ROOT / "cards_all_variants.json"
+
+SITE_URL = "https://piltoverarchive.com/cards?sets={code}"
+SET_CODES = ["OGS", "OGN", "SFD", "UNL", "VEN", "RAD"]
+PAGE_SIZE = 48
 
 DOMAIN_NAMES = {"Body", "Calm", "Fury", "Mind", "Chaos", "Order"}
 TYPE_NAMES = {"Champion Unit", "Signature Spell", "Legend", "Unit", "Spell", "Gear", "Rune", "Battlefield"}
 RARITY_NAMES = {"Legend", "Epic", "Rare", "Uncommon", "Common", "Token"}
 
-SETS = {"OGS": 24, "OGN": 298, "SFD": 221, "UNL": 219, "VEN": 166, "RAD": 167}
-
 SECTION_LABELS = {"description", "effect", "might"}
+
+# Números: SFD-058, SFD-058a (alt), SFD-T01 (token), SFD-R01a (runa alt), OGN-302* (firmada)
+NUMBER_PATTERN = r"[A-Z]+-[A-Z]?\d+[ab]?\*?"
+
+
+def variant_from_label(label: str) -> str:
+    """El modal dice la variante textualmente; sin etiqueta es estándar."""
+    low = label.lower()
+    if "signed" in low:
+        return "signed"
+    if "overnumbered" in low:
+        return "overnumbered"
+    if "alt" in low:
+        return "alt"
+    return "standard"
 
 
 def extract_card_data(page) -> dict | None:
@@ -118,11 +148,17 @@ def extract_card_data(page) -> dict | None:
         might_bonus = " ".join(sections.get("might", []))
         description = " ".join(p for p in (rules_text, effect_text, might_bonus) if p)
 
-        # Card Number
+        # Card Number (con sufijo a/b en las alters)
         card_number = ""
-        m = re.search(r'Card Number:\s*([A-Z]+-\d+)', full_text)
+        m = re.search(rf'Card Number:\s*({NUMBER_PATTERN})', full_text)
         if m:
             card_number = m.group(1)
+
+        # Variant: aparece como texto en el modal ("Alt Art", "Overnumbered + Signed")
+        variant_label = ""
+        m = re.search(r'Variant:\s*(.+?)(?:Close|Artist|$)', full_text)
+        if m:
+            variant_label = m.group(1).strip()
 
         # Set
         card_set = ""
@@ -145,152 +181,165 @@ def extract_card_data(page) -> dict | None:
             "effect_text": effect_text,
             "might_bonus": might_bonus,
             "description": description,
+            "variant": variant_from_label(variant_label),
+            "variant_label": variant_label,
         }
     except Exception as e:
         print(f"  Error extrayendo datos: {e}")
         return None
 
 
+def read_site_count(page) -> int | None:
+    m = re.search(r"([\d,]+)\s+cards", page.locator("body").inner_text())
+    return int(m.group(1).replace(",", "")) if m else None
+
+
+def clean_variant_tags(cards: list[dict]) -> None:
+    """Saca de `tags` el nombre de la variante (ej. un badge de arte alternativo).
+
+    Sin conocer cómo lo llama el sitio: en una alter/overnumbered, un tag que la
+    carta base (mismo nombre, estándar) no tiene se descarta.
+    """
+    base_tags: dict[str, set[str]] = {}
+    for c in cards:
+        if c.get("variant") == "standard":
+            base_tags.setdefault(c["name"], set()).update(c.get("tags", []))
+    for c in cards:
+        if c.get("variant") == "standard" or c["name"] not in base_tags:
+            continue
+        extra = [t for t in c.get("tags", []) if t not in base_tags[c["name"]]]
+        if extra:
+            c["tags"] = [t for t in c.get("tags", []) if t in base_tags[c["name"]]]
+
+
+def save_partial(cards: list[dict]) -> None:
+    PARTIAL_FILE.write_text(json.dumps(cards, ensure_ascii=False, indent=2), encoding="utf-8")
+
+
 def main():
-    # Cargar progreso previo si existe
-    cards = []
-    scraped_numbers = set()
-    if OUTPUT_FILE.exists():
-        cards = json.loads(OUTPUT_FILE.read_text(encoding="utf-8"))
-        # Se descartan las cartas viejas del set a scrapear (incluye alts y las
-        # sin número): se vuelven a traer solo las versiones Standard.
-        before = len(cards)
-        cards = [c for c in cards if c.get("set") != SCRAPE_SET_NAME]
-        print(f"Descartadas {before - len(cards)} cartas previas de {SCRAPE_SET_NAME}")
-        scraped_numbers = {c["card_number"] for c in cards if c.get("card_number")}
-        print(f"Cargadas {len(cards)} cartas previas")
+    old_cards = json.loads(OUTPUT_FILE.read_text(encoding="utf-8")) if OUTPUT_FILE.exists() else []
+
+    if old_cards and not BACKUP_FILE.exists():
+        shutil.copyfile(OUTPUT_FILE, BACKUP_FILE)
+        print(f"Backup creado: {BACKUP_FILE.name} ({len(old_cards)} cartas)")
+    elif BACKUP_FILE.exists():
+        print(f"Backup ya existente, no se pisa: {BACKUP_FILE.name}")
+
+    cards: list[dict] = []
+    if PARTIAL_FILE.exists():
+        cards = json.loads(PARTIAL_FILE.read_text(encoding="utf-8"))
+        print(f"Reanudando desde {PARTIAL_FILE.name}: {len(cards)} cartas")
+    scraped_numbers = {c["card_number"] for c in cards if c.get("card_number")}
+
+    site_counts: dict[str, int | None] = {}
 
     with sync_playwright() as p:
         browser = p.chromium.launch(headless=False)
         context = browser.new_context(viewport={"width": 1400, "height": 900})
         page = context.new_page()
 
-        # Navegar primero para cerrar cookie banner
-        page.goto(BASE_URL, wait_until="load", timeout=45000)
-        time.sleep(2)
-
-        # Cerrar cookie banner si aparece
-        try:
-            cookie_btn = page.locator('button:has-text("Accept"), button:has-text("Reject"), [data-cky-tag="accept-button"]').first
-            if cookie_btn.count():
-                cookie_btn.click(timeout=3000)
-                time.sleep(1)
-        except Exception:
-            pass
-
-        # Verificar que el filtro Standard quedó aplicado antes de scrapear.
-        m = re.search(r"(\d+)\s+cards", page.locator("body").inner_text())
-        site_count = int(m.group(1)) if m else None
-        print(f"El sitio muestra {site_count} cartas (esperado {EXPECTED_FILTER_COUNT})")
-        if site_count != EXPECTED_FILTER_COUNT:
-            browser.close()
-            raise SystemExit(
-                "El conteo no coincide: el filtro Standard no se aplicó. "
-                "No se scrapea nada para no mezclar alts."
-            )
-
-        for pg in range(1, TOTAL_PAGES + 1):
-            url = f"{BASE_URL}&page={pg}"
-            print(f"\n=== Página {pg}/{TOTAL_PAGES} ===")
-            for attempt in range(3):
-                try:
-                    page.goto(url, wait_until="networkidle", timeout=45000)
-                    break
-                except PWTimeout:
-                    print(f"  Timeout cargando página (intento {attempt+1}/3)")
-                    if attempt == 2:
-                        print("  Saltando página")
-                        continue
+        first = True
+        for code in SET_CODES:
+            base_url = SITE_URL.format(code=code)
+            page.goto(base_url, wait_until="load", timeout=45000)
             time.sleep(2)
 
-            # Buscar imágenes de cartas del CDN
-            card_imgs = page.locator('img[src*="cdn.piltoverarchive.com/cards/"]').all()
-            print(f"  {len(card_imgs)} cartas en la página")
-
-            for i, card_img in enumerate(card_imgs):
+            if first:
                 try:
-                    # Scroll al elemento para que sea visible
-                    card_img.scroll_into_view_if_needed(timeout=3000)
-                    time.sleep(0.3)
-                    card_img.click(timeout=3000)
-                    time.sleep(0.8)
+                    cookie_btn = page.locator('button:has-text("Accept"), button:has-text("Reject"), [data-cky-tag="accept-button"]').first
+                    if cookie_btn.count():
+                        cookie_btn.click(timeout=3000)
+                        time.sleep(1)
+                except Exception:
+                    pass
+                first = False
 
-                    data = extract_card_data(page)
-                    if data and data.get("name"):
-                        if data["card_number"] and data["card_number"] not in scraped_numbers:
-                            cards.append(data)
-                            scraped_numbers.add(data["card_number"])
-                            print(f"  [{i+1}/{len(card_imgs)}] {data['name']} ({data['card_number']})")
-                        elif not data["card_number"]:
-                            key = (data["name"], data["type"], data["set"])
-                            if any(
-                                not c.get("card_number")
-                                and (c["name"], c["type"], c["set"]) == key
-                                for c in cards
-                            ):
-                                print(f"  [{i+1}/{len(card_imgs)}] {data['name']} (sin número, ya existe)")
+            site_count = read_site_count(page)
+            site_counts[code] = site_count
+            if not site_count:
+                print(f"\n[{code}] No pude leer el conteo del sitio; salto este set")
+                continue
+            total_pages = math.ceil(site_count / PAGE_SIZE)
+            print(f"\n##### {code}: el sitio muestra {site_count} cartas ({total_pages} páginas) #####")
+
+            for pg in range(1, total_pages + 1):
+                url = f"{base_url}&page={pg}"
+                print(f"\n=== {code} página {pg}/{total_pages} ===")
+                for attempt in range(3):
+                    try:
+                        page.goto(url, wait_until="networkidle", timeout=45000)
+                        break
+                    except PWTimeout:
+                        print(f"  Timeout cargando página (intento {attempt+1}/3)")
+                time.sleep(2)
+
+                card_imgs = page.locator('img[src*="cdn.piltoverarchive.com/cards/"]').all()
+                print(f"  {len(card_imgs)} cartas en la página")
+
+                for i, card_img in enumerate(card_imgs):
+                    try:
+                        card_img.scroll_into_view_if_needed(timeout=3000)
+                        time.sleep(0.3)
+                        card_img.click(timeout=3000)
+                        time.sleep(0.8)
+
+                        data = extract_card_data(page)
+                        if data and data.get("name") and data["card_number"]:
+                            if data["card_number"] in scraped_numbers:
+                                print(f"  [{i+1}/{len(card_imgs)}] {data['name']} ({data['card_number']}) ya existe")
                             else:
                                 cards.append(data)
-                                print(f"  [{i+1}/{len(card_imgs)}] {data['name']} (sin número)")
+                                scraped_numbers.add(data["card_number"])
+                                print(f"  [{i+1}/{len(card_imgs)}] {data['name']} ({data['card_number']}) [{data['variant']}]")
+                        elif data and data.get("name"):
+                            print(f"  [{i+1}/{len(card_imgs)}] {data['name']} sin número: se descarta")
                         else:
-                            print(f"  [{i+1}/{len(card_imgs)}] {data['name']} (ya existe)")
-                    else:
-                        print(f"  [{i+1}/{len(card_imgs)}] No se pudo extraer datos")
+                            print(f"  [{i+1}/{len(card_imgs)}] No se pudo extraer datos")
 
-                    # Cerrar modal
-                    try:
-                        close = page.locator('button[data-slot="dialog-close"]').first
-                        if close.count():
-                            close.click(timeout=2000)
-                        else:
+                        try:
+                            close = page.locator('button[data-slot="dialog-close"]').first
+                            if close.count():
+                                close.click(timeout=2000)
+                            else:
+                                page.keyboard.press("Escape")
+                        except Exception:
                             page.keyboard.press("Escape")
-                    except Exception:
+                        time.sleep(0.5)
+
+                    except PWTimeout:
+                        print(f"  [{i+1}] Timeout, saltando")
                         page.keyboard.press("Escape")
-                    time.sleep(0.5)
+                        time.sleep(0.5)
+                    except Exception as e:
+                        print(f"  [{i+1}] Error: {e}")
+                        page.keyboard.press("Escape")
+                        time.sleep(0.5)
 
-                except PWTimeout:
-                    print(f"  [{i+1}] Timeout, saltando")
-                    page.keyboard.press("Escape")
-                    time.sleep(0.5)
-                except Exception as e:
-                    print(f"  [{i+1}] Error: {e}")
-                    page.keyboard.press("Escape")
-                    time.sleep(0.5)
-
-            # Guardar progreso después de cada página
-            OUTPUT_FILE.write_text(
-                json.dumps(cards, ensure_ascii=False, indent=2),
-                encoding="utf-8",
-            )
-            print(f"  Progreso guardado: {len(cards)} cartas totales")
+                save_partial(cards)
+                print(f"  Progreso guardado: {len(cards)} cartas totales")
 
         browser.close()
 
-    # Reporte de cartas faltantes
-    scraped_nums = {c["card_number"] for c in cards if c.get("card_number")}
-    print(f"\nScraping completo: {len(cards)} cartas en {OUTPUT_FILE}")
-    print("\n=== Cartas faltantes por set ===")
-    total_missing = 0
-    for set_code, count in SETS.items():
-        missing = []
-        for i in range(1, count + 1):
-            card_id = f"{set_code}-{i:03d}"
-            if card_id not in scraped_nums:
-                missing.append(card_id)
-        if missing:
-            print(f"  {set_code}: {len(missing)} faltantes -> {', '.join(missing)}")
-            total_missing += len(missing)
-        else:
-            print(f"  {set_code}: completo ({count}/{count})")
-    if total_missing == 0:
-        print("\n¡Todas las cartas scrapeadas!")
+    clean_variant_tags(cards)
+    save_partial(cards)
+
+    # Reporte por set y variante
+    print("\n=== Resumen por set ===")
+    for code in SET_CODES:
+        in_set = [c for c in cards if c["card_number"].startswith(code + "-")]
+        by_variant = {v: sum(1 for c in in_set if c.get("variant") == v) for v in ("standard", "alt", "overnumbered", "signed")}
+        print(f"  {code}: {len(in_set)} scrapeadas / {site_counts.get(code)} en el sitio  {by_variant}")
+
+    # Reemplazo seguro de cards.json: no se pierde ninguna carta que ya estaba.
+    new_numbers = {c["card_number"] for c in cards}
+    lost = sorted(c["card_number"] for c in old_cards if c.get("card_number") and c["card_number"] not in new_numbers)
+    RESULT_FILE.write_text(json.dumps(cards, ensure_ascii=False, indent=2), encoding="utf-8")
+    if lost:
+        print(f"\nNO se reemplaza cards.json: faltan {len(lost)} cartas que ya estaban: {', '.join(lost[:20])}")
+        print(f"Resultado guardado en {RESULT_FILE.name}; cards.json sigue intacto.")
     else:
-        print(f"\nTotal faltantes: {total_missing}")
+        shutil.copyfile(RESULT_FILE, OUTPUT_FILE)
+        print(f"\ncards.json actualizado: {len(old_cards)} -> {len(cards)} cartas (backup: {BACKUP_FILE.name})")
 
 
 if __name__ == "__main__":

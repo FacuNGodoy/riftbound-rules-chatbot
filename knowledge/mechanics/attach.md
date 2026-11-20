@@ -16,13 +16,13 @@ confidence: "curated"
 
 ## Reglas
 
-- [[rules/434 Attach|Regla 434.1]]
+- [[rules/435 Detach|Regla 435.1]]
 - [[rules/716 Attachment|Regla 717]]
 - [[rules/716 Attachment|Regla 718.4]]
 - [[rules/137 Might Bonus|Regla 137.3]]
 - [[rules/818 Equip|Regla 818.1]]
 
-## Cartas (263)
+## Cartas (264)
 
 - [[cards/OGN-017|Iron Ballista (OGN-017)]]
 - [[cards/OGN-021|Sun Disc (OGN-021)]]
@@ -71,18 +71,22 @@ confidence: "curated"
 - [[cards/RAD-013|Lost to the Sands (RAD-013)]]
 - [[cards/RAD-014|Shimmering Swimmer (RAD-014)]]
 - [[cards/RAD-017|Detonation Amplifier (RAD-017)]]
+- [[cards/RAD-022|Whirling Twirligig (RAD-022)]]
 - [[cards/RAD-023|Ziggs, Short-Fused (RAD-023)]]
 - [[cards/RAD-024|Blossoming Dreamroot (RAD-024)]]
+- [[cards/RAD-032|Battle Preparations (RAD-032)]]
 - [[cards/RAD-033|Command: Attack (RAD-033)]]
 - [[cards/RAD-035|Invigorating Bloom (RAD-035)]]
 - [[cards/RAD-037|Watchful Curator (RAD-037)]]
 - [[cards/RAD-039|Ephemeral Ward (RAD-039)]]
 - [[cards/RAD-042|Orianna, Exquisite (RAD-042)]]
+- [[cards/RAD-044|Hunting Blind (RAD-044)]]
 - [[cards/RAD-046|Resplendent Rostrum (RAD-046)]]
 - [[cards/RAD-052|Resource Extractor (RAD-052)]]
 - [[cards/RAD-056|Improvised Projectile (RAD-056)]]
 - [[cards/RAD-062|Gravity Field (RAD-062)]]
 - [[cards/RAD-064|Scrutinizing Scope (RAD-064)]]
+- [[cards/RAD-066|Spirit of the Forge (RAD-066)]]
 - [[cards/RAD-068|Orianna, Mechanical Marvel (RAD-068)]]
 - [[cards/RAD-069|Zero Point Inflection (RAD-069)]]
 - [[cards/RAD-070|Hold 'Em (RAD-070)]]
@@ -94,14 +98,10 @@ confidence: "curated"
 - [[cards/RAD-087|Portable Portal (RAD-087)]]
 - [[cards/RAD-089|Titanic Shrine (RAD-089)]]
 - [[cards/RAD-091|Jarvan IV, Martial Paragon (RAD-091)]]
+- [[cards/RAD-094|Explosimian (RAD-094)]]
 - [[cards/RAD-096|Satchel Charge (RAD-096)]]
 - [[cards/RAD-100|The Waters' Wage (RAD-100)]]
 - [[cards/RAD-101|An Offer You Can't Refuse (RAD-101)]]
 - [[cards/RAD-105|Reckless Innovator (RAD-105)]]
 - [[cards/RAD-106|The Good Stuff (RAD-106)]]
-- [[cards/RAD-108|Bushwhack Trap (RAD-108)]]
-- [[cards/RAD-111|Mechanical Bandit (RAD-111)]]
-- [[cards/RAD-112|Ziggs, Explosive (RAD-112)]]
-- [[cards/RAD-116|Concert Poster (RAD-116)]]
-- [[cards/RAD-123|Protector's Shield (RAD-123)]]
-- …y 183 cartas más en el grafo exportado.
+- …y 184 cartas más en el grafo exportado.

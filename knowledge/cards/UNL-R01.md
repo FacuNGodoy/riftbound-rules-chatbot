@@ -1,0 +1,32 @@
+---
+title: "Fury Rune"
+id: "UNL-R01"
+kind: "card"
+printed_number: "UNL-R01"
+card_type: "Rune"
+set: "Unleashed"
+tags: ["riftbound", "knowledge/card"]
+aliases: ["Fury Rune"]
+source: "cards.json"
+source_hash: "9d419f8ac9a3d4166f64df961894c2b2829dd0cd8b74956ffda407961560e944"
+generated: true
+confidence: "exact"
+---
+
+# Fury Rune
+
+**Número:** `UNL-R01`
+**Tipo:** Rune
+**Set:** Unleashed
+**Dominios:** Fury
+
+## Texto
+
+Sin texto.
+
+## Mecánicas relacionadas
+
+- Sin mecánica catalogada.
+
+> [!INFO] Nota generada
+> Regenerar con `python generate_knowledge_vault.py`; no editar manualmente.

@@ -24,7 +24,7 @@ confidence: "curated"
 - [[rules/353 The Process of Play|Regla 355.12]]
 - [[rules/353 The Process of Play|Regla 355.15]]
 
-## Cartas (260)
+## Cartas (258)
 
 - [[cards/OGN-013|Pouty Poro (OGN-013)]]
 - [[cards/OGN-023|Unlicensed Armory (OGN-023)]]
@@ -90,11 +90,13 @@ confidence: "curated"
 - [[cards/OGS-020|Highlander (OGS-020)]]
 - [[cards/RAD-005|Lingering Animus (RAD-005)]]
 - [[cards/RAD-007|Rally for War (RAD-007)]]
+- [[cards/RAD-011|Incorrigible Construct (RAD-011)]]
 - [[cards/RAD-013|Lost to the Sands (RAD-013)]]
 - [[cards/RAD-014|Shimmering Swimmer (RAD-014)]]
 - [[cards/RAD-017|Detonation Amplifier (RAD-017)]]
 - [[cards/RAD-018|Drakehound Packmaster (RAD-018)]]
 - [[cards/RAD-020|Mordekaiser, Twice Slain (RAD-020)]]
+- [[cards/RAD-022|Whirling Twirligig (RAD-022)]]
 - [[cards/RAD-027|Iridescent Avian (RAD-027)]]
 - [[cards/RAD-028|Ki Burst (RAD-028)]]
 - [[cards/RAD-029|Life from Stone (RAD-029)]]
@@ -104,6 +106,4 @@ confidence: "curated"
 - [[cards/RAD-036|Storm Raptor (RAD-036)]]
 - [[cards/RAD-037|Watchful Curator (RAD-037)]]
 - [[cards/RAD-043|Riven, Broken Blade (RAD-043)]]
-- [[cards/RAD-046|Resplendent Rostrum (RAD-046)]]
-- [[cards/RAD-051|Parallel Convergence (RAD-051)]]
-- …y 180 cartas más en el grafo exportado.
+- …y 178 cartas más en el grafo exportado.

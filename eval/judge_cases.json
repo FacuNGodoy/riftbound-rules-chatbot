@@ -26,7 +26,7 @@
     "expected": "no",
     "expected_verdict": "NO",
     "must_mention": ["811.1"],
-    "why": "Play effect desde Hidden: los targets tienen que estar en el mismo battlefield (811.1.d.2). Solo stunear ahí.",
+    "why": "Play effect desde Hidden: los targets tienen que estar en el mismo battlefield (811.1.d.3). Solo stunear ahí.",
     "cards": ["VEN-135"]
   },
   {
@@ -51,17 +51,17 @@
   },
   {
     "id": 6,
-    "tags": ["play-location", "attacker-defender", "355", "464"],
+    "tags": ["play-location", "attacker-defender", "355", "466"],
     "question": "Si durante un showdown descarto Flame Chompers, ¿la puedo jugar al battlefield?",
     "expected": "defendiendo si, atacando no",
     "expected_verdict": null,
-    "must_mention": ["355", "464"],
-    "why": "Jugar unidad pide ubicación válida: base o battlefield que controlás (355). El atacante no controla el BF contested (464). Chompers no cambia eso. La respuesta correcta depende del lado, así que no se puntúa por veredicto SI/NO.",
+    "must_mention": ["355", "466"],
+    "why": "Jugar unidad pide ubicación válida: base o battlefield que controlás (355). El atacante no controla el BF contested (466). Chompers no cambia eso. La respuesta correcta depende del lado, así que no se puntúa por veredicto SI/NO.",
     "cards": ["OGN-006"]
   },
   {
     "id": 7,
-    "tags": ["deathknell", "combat-cleanup", "320", "323.4", "466.1"],
+    "tags": ["deathknell", "combat-cleanup", "320", "323.4", "468.1"],
     "question": "Windswept Hillock. Defiendo con Ruined Rex y Glasc Mixologist. El rival ataca con Master Yi, Tempered (5 Might) y Steel Paws empowered (9 Might). El rival dice: se asigna el daño, se curan, y después triggerean Deathknell. Yo digo: se asigna el daño, Deathknell triggerea y se resuelve, y después se curan. Si Rex (Deathknell Deal 4) se resuelve antes del heal, Yi muere; si después, Yi sobrevive. ¿Cómo se resuelve?",
     "expected": "yi sobrevive",
     "expected_verdict": null,
@@ -82,24 +82,24 @@
   },
   {
     "id": 9,
-    "tags": ["graph", "deathgrip", "abandoned-hall", "play-trigger", "419.4"],
+    "tags": ["graph", "deathgrip", "abandoned-hall", "play-trigger", "420.4"],
     "question": "Mi rival controla Abandoned Hall y una unidad allí. Juega Deathgrip para matar esa unidad y darle su Might a otra unidad en la base. ¿La unidad que mata gana antes el +1 Might de Abandoned Hall?",
     "expected": "no",
     "expected_verdict": "NO",
-    "must_mention": ["419.4.a"],
+    "must_mention": ["420.4.a"],
     "graph": true,
-    "why": "El trigger de Abandoned Hall ocurre cuando Deathgrip terminó de resolver (419.4.a). Para entonces Deathgrip ya mató la unidad y leyó su Might.",
+    "why": "El trigger de Abandoned Hall ocurre cuando Deathgrip terminó de resolver (420.4.a). Para entonces Deathgrip ya mató la unidad y leyó su Might.",
     "cards": ["SFD-163", "UNL-205"]
   },
   {
     "id": 10,
-    "tags": ["graph", "defy", "abandoned-hall", "counter", "419.4"],
+    "tags": ["graph", "defy", "abandoned-hall", "counter", "420.4"],
     "question": "Estoy en Abandoned Hall. Mi rival counterea mi spell con Defy. ¿Abandoned Hall da +1 por el spell countereado? ¿Y por Defy?",
     "expected": "por el spell countereado no; por defy si",
     "expected_verdict": null,
-    "must_mention": ["419.4.a.1"],
+    "must_mention": ["420.4.a.1"],
     "graph": true,
-    "why": "El spell countereado no completó su resolución y no dispara el campo (419.4.a.1). Defy sí resolvió, así que luego dispara Abandoned Hall.",
+    "why": "El spell countereado no completó su resolución y no dispara el campo (420.4.a.1). Defy sí resolvió, así que luego dispara Abandoned Hall.",
     "cards": ["OGN-045", "UNL-205"]
   },
   {

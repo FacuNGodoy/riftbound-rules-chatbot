@@ -17,12 +17,12 @@ confidence: "curated"
 
 ## Reglas
 
-- Regla `419.4.a` (no encontrada)
-- Regla `419.4.a.1` (no encontrada)
+- [[rules/420 Move|Regla 420.4.a]]
+- [[rules/420 Move|Regla 420.4.a.1]]
 - [[rules/382 Triggered Abilities|Regla 383.3]]
 - [[rules/340 Step 4 - Resolve|Regla 340.1]]
 
-## Cartas (229)
+## Cartas (227)
 
 - [[cards/OGN-003|Chemtech Enforcer (OGN-003)]]
 - [[cards/OGN-016|Dangerous Duo (OGN-016)]]
@@ -97,11 +97,11 @@ confidence: "curated"
 - [[cards/RAD-035|Invigorating Bloom (RAD-035)]]
 - [[cards/RAD-039|Ephemeral Ward (RAD-039)]]
 - [[cards/RAD-040|Heartening Soul (RAD-040)]]
+- [[cards/RAD-044|Hunting Blind (RAD-044)]]
 - [[cards/RAD-049|Industrious Mechsmith (RAD-049)]]
 - [[cards/RAD-050|Mysterious Chronomancer (RAD-050)]]
 - [[cards/RAD-057|Piltovan Guidebot (RAD-057)]]
 - [[cards/RAD-058|Riptide Mage (RAD-058)]]
 - [[cards/RAD-060|The Empyrean (RAD-060)]]
-- [[cards/RAD-067|Clocktower Guardian (RAD-067)]]
-- [[cards/RAD-069|Zero Point Inflection (RAD-069)]]
-- …y 149 cartas más en el grafo exportado.
+- [[cards/RAD-066|Spirit of the Forge (RAD-066)]]
+- …y 147 cartas más en el grafo exportado.

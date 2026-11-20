@@ -19,7 +19,7 @@ confidence: "curated"
 - [[rules/201 Costs|Regla 206]]
 - [[rules/201 Costs|Regla 204.1]]
 
-## Cartas (230)
+## Cartas (229)
 
 - [[cards/OGN-001|Blazing Scorcher (OGN-001)]]
 - [[cards/OGN-002|Brazen Buccaneer (OGN-002)]]
@@ -80,11 +80,14 @@ confidence: "curated"
 - [[cards/RAD-058|Riptide Mage (RAD-058)]]
 - [[cards/RAD-060|The Empyrean (RAD-060)]]
 - [[cards/RAD-061|Ekko, Ingenious (RAD-061)]]
+- [[cards/RAD-066|Spirit of the Forge (RAD-066)]]
 - [[cards/RAD-067|Clocktower Guardian (RAD-067)]]
 - [[cards/RAD-070|Hold 'Em (RAD-070)]]
 - [[cards/RAD-075|Skystrike Squadron (RAD-075)]]
+- [[cards/RAD-080|Bloodscent Swarm (RAD-080)]]
 - [[cards/RAD-083|Stalwart Goatherd (RAD-083)]]
 - [[cards/RAD-086|K'Sante, Courageous (RAD-086)]]
+- [[cards/RAD-105|Reckless Innovator (RAD-105)]]
 - [[cards/RAD-111|Mechanical Bandit (RAD-111)]]
 - [[cards/RAD-115|Transpositionist (RAD-115)]]
 - [[cards/RAD-120|Meticulous Restorationist (RAD-120)]]
@@ -92,13 +95,10 @@ confidence: "curated"
 - [[cards/RAD-125|Dune Devourer (RAD-125)]]
 - [[cards/RAD-127|Rousing Display (RAD-127)]]
 - [[cards/RAD-129|Trifarian Captain (RAD-129)]]
+- [[cards/RAD-135|Remember the Fallen (RAD-135)]]
 - [[cards/RAD-136|Dockside Lock-Up (RAD-136)]]
 - [[cards/RAD-139|Ekko, Boy Who Shattered Time (RAD-139)]]
 - [[cards/RAD-140|Chronobreak (RAD-140)]]
 - [[cards/RAD-145|Orianna, Lady of Clockwork (RAD-145)]]
 - [[cards/RAD-150|Blade of the Exile (RAD-150)]]
-- [[cards/RAD-151|Seraphine, Starry-Eyed Songstress (RAD-151)]]
-- [[cards/RAD-162|Firelights' Hideout (RAD-162)]]
-- [[cards/RAD-163|Hunter's Circle (RAD-163)]]
-- [[cards/RAD-168|Ekko, Boy Who Shattered Time (RAD-168)]]
-- …y 150 cartas más en el grafo exportado.
+- …y 149 cartas más en el grafo exportado.

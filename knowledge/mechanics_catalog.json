@@ -69,20 +69,20 @@
     "id": "kill",
     "title": "Kill",
     "patterns": ["\\bkill(?:ed|s|ing)?\\b", "\\bdie[sd]?\\b"],
-    "rule_ids": ["428.1", "428.2", "143.2.a"],
+    "rule_ids": ["429.1", "429.2", "143.2.b"],
     "facts": [
       "Kill mueve un permanente del board al trash.",
       "Una unidad muerta deja de estar en su ubicación anterior."
     ],
     "relations": [
-      {"type": "MODIFIES", "target": "property:board-location", "target_kind": "property", "label": "Kill mueve el permanente del board al trash", "rule_id": "428.1"}
+      {"type": "MODIFIES", "target": "property:board-location", "target_kind": "property", "label": "Kill mueve el permanente del board al trash", "rule_id": "429.1"}
     ]
   },
   {
     "id": "might",
     "title": "Might actual",
     "patterns": ["\\bmight\\b", "\\[might\\]"],
-    "rule_ids": ["143.2", "143.2.a", "137.3", "476"],
+    "rule_ids": ["143.2", "143.2.b", "137.3", "478"],
     "facts": [
       "Cuando un efecto dice Might sin decir printed Might, usa el valor actual en el momento de ejecutar esa instrucción.",
       "Los modificadores activos forman parte del Might actual."
@@ -95,13 +95,13 @@
     "id": "counter",
     "title": "Counter",
     "patterns": ["\\bcounter(?:ed|s|ing)?\\b"],
-    "rule_ids": ["425.1", "425.2", "420.4.a.1"],
+    "rule_ids": ["426.1", "426.2", "420.4.a.1"],
     "facts": [
       "Counter impide que el ítem countereado se ejecute.",
       "Un trigger que exige que la carta haya sido jugada no ocurre si esa carta no resolvió."
     ],
     "relations": [
-      {"type": "PREVENTS", "target": "event:card-resolved", "target_kind": "event", "label": "Counter impide la resolución", "rule_id": "425.1"}
+      {"type": "PREVENTS", "target": "event:card-resolved", "target_kind": "event", "label": "Counter impide la resolución", "rule_id": "426.1"}
     ]
   },
   {
@@ -121,7 +121,7 @@
     "id": "replacement",
     "title": "Replacement effects",
     "patterns": ["\\binstead\\b", "\\bwould\\b"],
-    "rule_ids": ["368.1", "369.1", "438.1", "359.3.e.14"],
+    "rule_ids": ["368.1", "369.1", "439.1", "359.3.e.14"],
     "facts": [
       "Un replacement effect sustituye un evento; no es lo mismo que perder un target.",
       "Las instrucciones vinculadas deben comprobar si la acción anterior ocurrió o fue reemplazada."
@@ -134,7 +134,7 @@
     "id": "linked-instruction",
     "title": "Instrucciones vinculadas",
     "patterns": ["\\bif you do\\b", "\\bif they do\\b", "\\bits? controller\\b"],
-    "rule_ids": ["359.3.e.14", "394"],
+    "rule_ids": ["359.3.e.14", "395"],
     "facts": [
       "If you do vincula la instrucción posterior al éxito de la acción anterior.",
       "Una referencia posterior puede comportarse distinto frente a reemplazo y frente a una instrucción ignorada."
@@ -165,7 +165,7 @@
     "id": "deal",
     "title": "Deal damage",
     "patterns": ["\\bdeal(?:s|t|ing)?\\b", "\\bdamage\\b"],
-    "rule_ids": ["417.1", "417.2", "143.2.a"],
+    "rule_ids": ["418.1", "418.2", "143.2.b"],
     "facts": [
       "Deal marca daño; una unidad con daño no cero igual o mayor a su Might muere."
     ]
@@ -183,7 +183,7 @@
     "id": "move",
     "title": "Move",
     "patterns": ["\\bmove(?:d|s|ing)?\\b"],
-    "rule_ids": ["448.1", "449.1", "355.4"],
+    "rule_ids": ["448.1", "451.1", "355.4"],
     "facts": [
       "La ubicación destino se elige al finalizar el efecto que mueve.",
       "Mover no equivale a jugar una carta."
@@ -193,7 +193,7 @@
     "id": "attach",
     "title": "Attach y Equipment",
     "patterns": ["\\battach(?:ed|es|ing)?\\b", "\\bequip(?:ment)?\\b", "\\bgear\\b"],
-    "rule_ids": ["434.1", "717", "718.4", "137.3", "818.1"],
+    "rule_ids": ["435.1", "717", "718.4", "137.3", "818.1"],
     "facts": [
       "El Might Bonus de una carta attached modifica el Might de la carta superior mientras siga attached."
     ]

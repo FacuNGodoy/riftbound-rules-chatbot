@@ -18,10 +18,7 @@ confidence: "curated"
 ## Reglas
 
 - [[rules/353 The Process of Play|Regla 359.3.e.14]]
-- [[rules/353 The Process of Play|Regla 359.3.e.14.a]]
-- [[rules/353 The Process of Play|Regla 359.3.e.14.b]]
-- [[rules/353 The Process of Play|Regla 359.3.e.14.c]]
-- Regla `394.1` (no encontrada)
+- [[rules/393 Linked Abilities|Regla 395]]
 
 ## Cartas (47)
 
@@ -66,9 +63,9 @@ confidence: "curated"
 - [[cards/UNL-190|Lilting Lullaby (UNL-190)]]
 - [[cards/UNL-200|Mirror Image (UNL-200)]]
 - [[cards/UNL-206|Altar of Blood (UNL-206)]]
-- [[cards/UNNUMBERED-vendetta-shadow-clone-unit|Shadow Clone (UNNUMBERED-vendetta-shadow-clone-unit)]]
 - [[cards/VEN-023|Zed, From the Shadows (VEN-023)]]
 - [[cards/VEN-112|Zed, Without a Sound (VEN-112)]]
 - [[cards/VEN-144|Death Mark (VEN-144)]]
 - [[cards/VEN-152|Rebuttal (VEN-152)]]
 - [[cards/VEN-157|Dragon Roost (VEN-157)]]
+- [[cards/VEN-T05|Shadow Clone (VEN-T05)]]

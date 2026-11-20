@@ -420,7 +420,10 @@ status: active
 
 
 def main() -> None:
-    cards = json.loads(CARDS_FILE.read_text(encoding="utf-8"))
+    cards = [
+        c for c in json.loads(CARDS_FILE.read_text(encoding="utf-8"))
+        if c.get("variant", "standard") == "standard"
+    ]
     catalog = json.loads(CATALOG_FILE.read_text(encoding="utf-8"))
     rules_text = RULES_FILE.read_text(encoding="utf-8")
     sections = parse_rule_sections(rules_text)
