@@ -611,6 +611,8 @@ GRAPH_OUT_OF_SCOPE_HINTS = (
     "hidden", "hide", "oculta", "esconde", "boca abajo", "facedown",
     "descart", "discard",
     "atacante", "defensor", "attacker", "defender", "showdown",
+    "accelerate", "costo adicional", "costos adicionales", "additional cost",
+    "ignorando", "ignoring", "ignora su", "sin pagar",
 )
 
 
@@ -734,6 +736,9 @@ CRITICAL_RULE_MARKERS = {
     "**468.1.a.1.**": ["deathknell", "deathkneel", "knell", "curan", "cleanup", "heal", "curacion"],
     "**466.2.c.1.**": ["atacante", "defensor", "attacker", "defender",
                        "showdown", "contested", "disputa"],
+    "**356.1.b.**": ["accelerate", "costo adicional", "costos adicionales",
+                     "additional cost", "ignorando", "ignoring", "ignora su",
+                     "sin pagar", "ignore its cost"],
     "**808.1.**": ["deathknell", "deathkneel", "knell"],
     "**359.3.e.14.**": ["zhonya", "zhonyas", "hourglass", HIDDEN_BLADE_CARD_NAME, "linked"],
     "**055.**": TARGETING_TRIGGERS,

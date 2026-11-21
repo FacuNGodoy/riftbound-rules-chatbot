@@ -112,5 +112,15 @@
     "graph": true,
     "why": "Zhonya reemplaza el kill, por lo que el 'If you do' de Deathgrip falla y no da Might. Draw 1 es una instrucción independiente y sí ocurre.",
     "cards": ["SFD-163", "OGN-077"]
+  },
+  {
+    "id": 12,
+    "tags": ["accelerate", "additional-cost", "ignore-cost", "356"],
+    "question": "Consulta, si juego un kharox y me quiero traer una kaisa (unidad) roja con accelerate, deberia pagar el power del accelerate?",
+    "expected": "si; ignorar el costo solo pone en cero el costo base, el costo adicional opcional de Accelerate se paga igual",
+    "expected_verdict": "SI",
+    "must_mention": ["356"],
+    "why": "356.1.b.3: ignorar el costo pone en cero el costo base; los costos adicionales (Accelerate) se siguen pagando. Un juez humano confirmó que los costos extra se pagan igual.",
+    "cards": ["VEN-114", "OGN-039"]
   }
 ]
