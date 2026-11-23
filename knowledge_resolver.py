@@ -198,8 +198,10 @@ class KnowledgeResolver:
         rule_nodes: list[dict],
     ) -> str:
         parts = [
-            "INTERACCIÓN CUBIERTA POR EL GRAFO DE CONOCIMIENTO.",
-            "Los hechos y relaciones siguientes son restricciones obligatorias.",
+            "CONTEXTO DE APOYO DEL GRAFO DE CONOCIMIENTO (no exhaustivo).",
+            "Los hechos y relaciones siguientes son correctos, pero pueden no cubrir "
+            "todas las reglas aplicables (p. ej. costos adicionales o ignorar costos): "
+            "contrastalos con las reglas del contexto.",
             "",
             "CARTAS EXACTAS:",
         ]

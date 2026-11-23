@@ -616,6 +616,11 @@ GRAPH_OUT_OF_SCOPE_HINTS = (
 )
 
 
+# El atajo del grafo (1 sola llamada, sin verificador) quedó apagado: todo pasa por RAG
+# y el grafo aporta solo contexto de apoyo. RIFTBOUND_GRAPH_SHORTCUT=1 lo reactiva.
+GRAPH_SHORTCUT_ENABLED = os.environ.get("RIFTBOUND_GRAPH_SHORTCUT", "0") == "1"
+
+
 def graph_out_of_scope(query: str) -> bool:
     q = query.lower().replace(HIDDEN_BLADE_CARD_NAME.lower(), " ")
     skip = any(hint in q for hint in GRAPH_OUT_OF_SCOPE_HINTS)
@@ -1514,12 +1519,20 @@ def ambiguity_ruling(ambiguities: list[str]) -> dict:
     }
 
 
+def graph_support_context(resolution: dict | None) -> str:
+    """Contexto del grafo para el prompt del RAG, sin la pregunta repetida al final."""
+    if not resolution:
+        return ""
+    return resolution["context"].rsplit("\nPREGUNTA:", 1)[0].rstrip()
+
+
 def build_user_message(
     chunks: list[str],
     card_texts: list[str],
     ambiguities: list[str],
     pinned: str,
     query: str,
+    graph_context: str = "",
 ) -> str:
     """Arma el prompt del draft. Se reusa en la segunda pasada con más contexto."""
     parts = []
@@ -1531,6 +1544,12 @@ def build_user_message(
         for i, ct in enumerate(card_texts, 1):
             cards_block += f"Carta {i}:\n{ct}\n\n"
         parts.append(cards_block.rstrip())
+    if graph_context:
+        parts.append(
+            "Contexto de apoyo del grafo de conocimiento (mecánicas, relaciones y "
+            "reglas curadas). Usalo junto con las reglas de arriba; NO es una lista "
+            "completa de las reglas aplicables:\n\n" + graph_context
+        )
     if ambiguities:
         parts.append(
             "IMPORTANTE - AMBIGÜEDAD DETECTADA:\n"
@@ -1603,7 +1622,10 @@ async def ask(
         print("PINNED RULING aplicado")
 
     # 5. Armar mensaje del usuario
-    user_message = build_user_message(chunks, card_texts, ambiguities, pinned, query)
+    user_message = build_user_message(
+            chunks, card_texts, ambiguities, pinned, query,
+            graph_support_context(graph_resolution),
+        )
 
     # 6. Generar respuesta con Gemini (con historial)
     # Un ruling pineado no debe heredar una respuesta previa incorrecta.
@@ -1621,7 +1643,7 @@ async def ask(
         review = deterministic_ruling(query)
         route = "deterministic" if review is not None else "rag"
         ruling = None
-        if review is None and graph_resolution and not graph_out_of_scope(query):
+        if review is None and graph_resolution and GRAPH_SHORTCUT_ENABLED and not graph_out_of_scope(query):
             try:
                 graph_review = generate_graph_review(query, graph_resolution)
                 if graph_review is not None:
@@ -1676,8 +1698,11 @@ async def ask(
                         evidence = build_evidence_catalog(
                             chunks, metadatas, list(evidence_cards.values())
                         )
+                        if graph_resolution:
+                            evidence.update(graph_resolution["evidence"])
                         retry_message = build_user_message(
-                            chunks, card_texts, ambiguities, pinned, query
+                            chunks, card_texts, ambiguities, pinned, query,
+                            graph_support_context(graph_resolution),
                         )
                         retry_draft = generate_with_fallback(
                             retry_message, SYSTEM_PROMPT, gemini_history,
@@ -1794,7 +1819,10 @@ async def ask_stream(
         pinned = get_pinned_ruling(query)
         if pinned:
             print("PINNED RULING aplicado")
-        user_message = build_user_message(chunks, card_texts, ambiguities, pinned, query)
+        user_message = build_user_message(
+            chunks, card_texts, ambiguities, pinned, query,
+            graph_support_context(graph_resolution),
+        )
         gemini_history = []
         if not pinned:
             for msg in conversation_history:
@@ -1810,7 +1838,7 @@ async def ask_stream(
             review = deterministic_ruling(query)
             route = "deterministic" if review is not None else "rag"
             ruling = None
-            if review is None and graph_resolution and not graph_out_of_scope(query):
+            if review is None and graph_resolution and GRAPH_SHORTCUT_ENABLED and not graph_out_of_scope(query):
                 try:
                     yield sse("status", "graph")
                     graph_review = generate_graph_review(query, graph_resolution)
@@ -1862,8 +1890,11 @@ async def ask_stream(
                             evidence = build_evidence_catalog(
                                 merged, merged_metas, list(evidence_cards.values())
                             )
+                            if graph_resolution:
+                                evidence.update(graph_resolution["evidence"])
                             retry_message = build_user_message(
-                                merged, card_texts, ambiguities, pinned, query
+                                merged, card_texts, ambiguities, pinned, query,
+                                graph_support_context(graph_resolution),
                             )
                             yield sse("status", "draft_retry")
                             retry_draft = generate_with_fallback(
